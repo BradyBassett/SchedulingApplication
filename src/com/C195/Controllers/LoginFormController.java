@@ -13,8 +13,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static helper.JDBC.executeQuery;
-
+import static com.C195.Database.JDBC.executeQuery;
 
 public class LoginFormController extends BaseFormController implements Initializable {
     @FXML private TextField usernameField;
