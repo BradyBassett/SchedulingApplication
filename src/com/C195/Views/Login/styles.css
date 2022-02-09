@@ -1,0 +1,27 @@
+* {
+    -fx-primary-bg: #ccfbf1;
+    -fx-secondary-bg: #2c8599;
+    -fx-primary-btn: #c43c5c;
+}
+
+GridPane {
+    -fx-background-color: -fx-primary-bg;
+}
+
+Button {
+    -fx-background-color: -fx-primary-btn;
+    -fx-background-radius: 10 10 10 10;
+}
+
+TextField {
+    -fx-background-radius: 10 10 10 10;
+}
+
+PasswordField {
+    -fx-background-radius: 10 10 10 10;
+}
+
+.Container {
+    -fx-background-color: -fx-secondary-bg;
+    -fx-background-radius: 10 10 10 10;
+}
