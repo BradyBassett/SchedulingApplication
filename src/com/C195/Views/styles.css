@@ -1,10 +1,10 @@
 * {
-    -fx-primary-bg: #ccfbf1;
+    -fx-primary-bg: #c3cfea;
     -fx-secondary-bg: #2c8599;
     -fx-primary-btn: #c43c5c;
 }
 
-GridPane {
+.primary-bg {
     -fx-background-color: -fx-primary-bg;
 }
 
@@ -21,7 +21,7 @@ PasswordField {
     -fx-background-radius: 10 10 10 10;
 }
 
-.Container {
+.container {
     -fx-background-color: -fx-secondary-bg;
     -fx-background-radius: 10 10 10 10;
 }
