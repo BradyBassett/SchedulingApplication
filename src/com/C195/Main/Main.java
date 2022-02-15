@@ -10,8 +10,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         ViewController viewController = new ViewController();
-        viewController.showView(stage, "../Views/Login/loginView.fxml");
-        Image image = new Image("icon.png");
+        viewController.showView(stage, "../Views/loginView.fxml");
+        Image image = new Image("com/C195/Resources/icon.png");
         stage.getIcons().add(image);
     }
 
