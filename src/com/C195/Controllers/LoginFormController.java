@@ -24,7 +24,7 @@ import static com.C195.Database.JDBC.openConnection;
 import static com.C195.Database.QueryUsers.queryUser;
 
 
-public class LoginFormController extends BaseFormController implements Initializable {
+public class LoginFormController extends ViewController implements Initializable {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginBtn;
@@ -52,9 +52,8 @@ public class LoginFormController extends BaseFormController implements Initializ
         }
         logLoginAttempt(successfulLogin, errorMessage);
         if (successfulLogin) {
-            ViewController viewController = new ViewController();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            viewController.showView(stage, "../Views/mainView.fxml");
+            showView(stage, "../Views/mainView.fxml");
         }
     }
 

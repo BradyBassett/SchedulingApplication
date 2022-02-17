@@ -11,7 +11,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class MainViewController extends BaseFormController implements Initializable {
+public class MainViewController extends ViewController implements Initializable {
     @FXML private Tab appointmentsTab;
     @FXML private Tab customersTab;
     @FXML private Button addButton;
