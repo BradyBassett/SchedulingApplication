@@ -25,3 +25,7 @@ PasswordField {
     -fx-background-color: -fx-secondary-bg;
     -fx-background-radius: 10 10 10 10;
 }
+
+.table-view .table-cell {
+    -fx-font-size: 15px;
+}
