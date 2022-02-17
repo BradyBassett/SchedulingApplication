@@ -1,6 +1,6 @@
 package com.C195.Models;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 public class Appointment {
     private int appointmentId;
@@ -8,13 +8,13 @@ public class Appointment {
     private String description;
     private String location;
     private String type;
-    private LocalDate start;
-    private LocalDate end;
+    private Timestamp start;
+    private Timestamp end;
     private Customer customer;
     private User user;
     private Contact contact;
 
-    public Appointment(int appointmentId, String title, String description, String location, String type, LocalDate start, LocalDate end, Customer customer, User user, Contact contact) {
+    public Appointment(int appointmentId, String title, String description, String location, String type, Timestamp start, Timestamp end, Customer customer, User user, Contact contact) {
         this.appointmentId = appointmentId;
         this.title = title;
         this.description = description;
@@ -47,11 +47,11 @@ public class Appointment {
         return type;
     }
 
-    public LocalDate getStart() {
+    public Timestamp getStart() {
         return start;
     }
 
-    public LocalDate getEnd() {
+    public Timestamp getEnd() {
         return end;
     }
 
@@ -87,11 +87,11 @@ public class Appointment {
         this.type = type;
     }
 
-    public void setStart(LocalDate start) {
+    public void setStart(Timestamp start) {
         this.start = start;
     }
 
-    public void setEnd(LocalDate end) {
+    public void setEnd(Timestamp end) {
         this.end = end;
     }
 
