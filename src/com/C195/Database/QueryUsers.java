@@ -19,7 +19,7 @@ public abstract class QueryUsers extends Query {
         currentUser = user;
     }
 
-    public static boolean queryUser(String username, String password) throws SQLException {
+    public static void queryUser(String username, String password) throws SQLException {
         String statement = "SELECT * " +
                            "FROM users " +
                            "WHERE User_Name='" + username + "' " +
@@ -33,8 +33,6 @@ public abstract class QueryUsers extends Query {
             User user = new User(results.getInt("User_ID"), results.getString("User_Name"),
                     results.getString("Password"));
             setCurrentUser(user);
-            return true;
         }
-        return false;
     }
 }
