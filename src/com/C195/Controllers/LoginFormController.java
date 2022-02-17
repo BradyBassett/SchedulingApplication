@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
+import static com.C195.Database.QueryUsers.getCurrentUser;
 import static com.C195.Database.QueryUsers.queryUser;
 
 
@@ -40,8 +41,10 @@ public class LoginFormController extends ViewController implements Initializable
     @FXML private void onLogin(ActionEvent event) {
         boolean successfulLogin = true;
         String errorMessage = "N/A";
+
         try {
             openConnection();
+            queryUser(usernameField.getText(), passwordField.getText());
             loginValidation();
         } catch (NullPointerException | SQLException e) {
             showAlert(e);
@@ -50,6 +53,7 @@ public class LoginFormController extends ViewController implements Initializable
         } finally {
             closeConnection();
         }
+
         logLoginAttempt(successfulLogin, errorMessage);
         if (successfulLogin) {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -62,7 +66,7 @@ public class LoginFormController extends ViewController implements Initializable
             throw new NullPointerException(bundle.getString("error.nullUsername"));
         if (passwordField.getText().isEmpty())
             throw new NullPointerException(bundle.getString("error.nullPassword"));
-        if (!queryUser(usernameField.getText(), passwordField.getText()))
+        if (getCurrentUser() == null)
             throw new NullPointerException(bundle.getString("error.noMatchingUser"));
     }
 
@@ -70,6 +74,7 @@ public class LoginFormController extends ViewController implements Initializable
         final DateTimeFormatter dtf = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         final String dateTime = dtf.format(OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         final String delimiter = "---";
+
         try {
             final FileWriter fw = new FileWriter("login_activity.txt", true);
             fw.write("Successful Login: " + successfulLogin + delimiter + "Username Attempted: " +
