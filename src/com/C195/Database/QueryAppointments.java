@@ -2,6 +2,7 @@ package com.C195.Database;
 
 import com.C195.Models.Appointment;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,21 +16,22 @@ import static com.C195.Database.QueryCustomers.queryCustomer;
 import static com.C195.Database.QueryUsers.getCurrentUser;
 
 public abstract class QueryAppointments extends Query {
-    private ArrayList<Appointment> appointments = new ArrayList<>();
+    private static ArrayList<Appointment> appointments = new ArrayList<>();
 
-    public ArrayList<Appointment> getAppointments() {
+    public static ArrayList<Appointment> getAppointments() {
         return appointments;
     }
 
-    public void addAppointment(Appointment appointment) {
+    public static void addAppointment(Appointment appointment) {
         appointments.add(appointment);
     }
 
-    public void queryAppointments() throws SQLException {
+    public static void queryAppointments(Date date) throws SQLException {
         appointments = new ArrayList<>();
         String statement = "SELECT * " +
                            "FROM appointments " +
-                           "WHERE User_ID=" + getCurrentUser() + "';";
+                           "WHERE User_ID=" + getCurrentUser().getUserId() + " " +
+                           "AND Start BETWEEN '" + date + "' AND '" + date + " 23:59:59';";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();
