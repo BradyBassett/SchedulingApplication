@@ -22,7 +22,7 @@ public abstract class QueryContacts extends Query {
     public static void queryContact(int contactId) throws SQLException {
         String statement = "SELECT * " +
                 "FROM contacts " +
-                "WHERE Contact_ID='" + contactId + ";";
+                "WHERE Contact_ID=" + contactId + ";";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();

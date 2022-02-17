@@ -22,7 +22,7 @@ public abstract class QueryCountries extends Query {
     public static void queryCountry(int countryId) throws SQLException {
         String statement = "SELECT * " +
                 "FROM countries " +
-                "WHERE Country_ID='" + countryId + ";";
+                "WHERE Country_ID=" + countryId + ";";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();

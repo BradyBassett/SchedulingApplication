@@ -25,7 +25,7 @@ public abstract class QueryCustomers extends Query {
     public static void queryCustomer(int customerId) throws SQLException {
         String statement = "SELECT * " +
                 "FROM customers " +
-                "WHERE Customer_ID='" + customerId + ";";
+                "WHERE Customer_ID=" + customerId + ";";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();

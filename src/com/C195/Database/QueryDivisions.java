@@ -24,7 +24,7 @@ public abstract class QueryDivisions extends Query {
     public static void queryDivision(int divisionId) throws SQLException {
         String statement = "SELECT * " +
                 "FROM first_level_divisions " +
-                "WHERE Division_ID='" + divisionId + ";";
+                "WHERE Division_ID=" + divisionId + ";";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();
