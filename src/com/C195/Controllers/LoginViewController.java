@@ -25,7 +25,7 @@ import static com.C195.Database.QueryUsers.getCurrentUser;
 import static com.C195.Database.QueryUsers.queryUser;
 
 
-public class LoginFormController extends ViewController implements Initializable {
+public class LoginViewController extends ViewController implements Initializable {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginBtn;
@@ -47,7 +47,7 @@ public class LoginFormController extends ViewController implements Initializable
             queryUser(usernameField.getText(), passwordField.getText());
             loginValidation();
         } catch (NullPointerException | SQLException e) {
-            showErrorAlert(e);
+            showAlert(e);
             errorMessage = e.getMessage();
             successfulLogin = false;
         } finally {
