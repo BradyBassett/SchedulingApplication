@@ -1,7 +1,7 @@
 package com.C195.Controllers;
 
 import com.C195.Models.Appointment;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,21 +22,40 @@ import static com.C195.Database.QueryAppointments.queryAppointments;
 
 public class MainViewController extends ViewController implements Initializable {
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+    @FXML private Label appointmentsLabel;
+    @FXML private Label customersLabel;
     @FXML private Tab appointmentsTab;
     @FXML private Tab customersTab;
-    @FXML private Button addButton;
-    @FXML private Button modifyButton;
-    @FXML private Button deleteButton;
-    @FXML private DatePicker selectedDate;
+    @FXML private Button addAppointmentButton;
+    @FXML private Button modifyAppointmentButton;
+    @FXML private Button deleteAppointmentButton;
+    @FXML private Button addCustomerButton;
+    @FXML private Button modifyCustomerButton;
+    @FXML private Button deleteCustomerButton;
+    @FXML private RadioButton byDayRadioButton;
+    @FXML private RadioButton byWeekRadioButton;
+    @FXML private RadioButton byMonthRadioButton;
+    @FXML private DatePicker selectedDay;
     @FXML private TableView<Appointment> appointmentTable;
+    @FXML private TableColumn<Appointment, Integer> appointmentId;
     @FXML private TableColumn<Appointment, String> appointmentTitle;
     @FXML private TableColumn<Appointment, String> appointmentDescription;
     @FXML private TableColumn<Appointment, String> appointmentLocation;
     @FXML private TableColumn<Appointment, String> appointmentType;
     @FXML private TableColumn<Appointment, String> appointmentStart;
     @FXML private TableColumn<Appointment, String> appointmentEnd;
-    @FXML private TableColumn<Appointment, String> appointmentCustomer;
-    @FXML private TableColumn<Appointment, String> appointmentContact;
+    @FXML private TableColumn<Appointment, Integer> appointmentCustomerId;
+    @FXML private TableColumn<Appointment, Integer> appointmentContactId;
+    @FXML private TableColumn<Appointment, Integer> appointmentUserId;
+    @FXML private TableView<Appointment> customerTable;
+    @FXML private TableColumn<Appointment, Integer> customerId;
+    @FXML private TableColumn<Appointment, String> customerName;
+    @FXML private TableColumn<Appointment, String> customerAddress;
+    @FXML private TableColumn<Appointment, String> customerPostalCode;
+    @FXML private TableColumn<Appointment, String> customerPhone;
+    @FXML private TableColumn<Appointment, Integer> customerDivisionId;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -47,25 +66,45 @@ public class MainViewController extends ViewController implements Initializable 
     private void initText() {
         appointmentsTab.setText(bundle.getString("tab.appointments"));
         customersTab.setText(bundle.getString("tab.customers"));
-        addButton.setText(bundle.getString("button.add"));
-        modifyButton.setText(bundle.getString("button.modify"));
-        deleteButton.setText(bundle.getString("button.delete"));
-        selectedDate.setValue(LocalDate.now());
+        appointmentsLabel.setText(bundle.getString("tab.appointments"));
+        customersLabel.setText(bundle.getString("tab.customers"));
+        addAppointmentButton.setText(bundle.getString("button.add"));
+        modifyAppointmentButton.setText(bundle.getString("button.modify"));
+        deleteAppointmentButton.setText(bundle.getString("button.delete"));
+        addCustomerButton.setText(bundle.getString("button.add"));
+        modifyCustomerButton.setText(bundle.getString("button.modify"));
+        deleteCustomerButton.setText(bundle.getString("button.delete"));
+        byMonthRadioButton.setText(bundle.getString("button.month"));
+        byWeekRadioButton.setText(bundle.getString("button.week"));
+        byDayRadioButton.setText(bundle.getString("button.day"));
+        selectedDay.setValue(LocalDate.now());
 
-        appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty")));
+        appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.day")));
+        appointmentId.setText(bundle.getString("table.appointment"));
         appointmentTitle.setText(bundle.getString("table.title"));
         appointmentDescription.setText(bundle.getString("table.description"));
         appointmentLocation.setText(bundle.getString("table.location"));
         appointmentType.setText(bundle.getString("table.type"));
         appointmentStart.setText(bundle.getString("table.start"));
         appointmentEnd.setText(bundle.getString("table.end"));
-        appointmentCustomer.setText(bundle.getString("table.customer"));
-        appointmentContact.setText(bundle.getString("table.contact"));
+        appointmentCustomerId.setText(bundle.getString("table.customer"));
+        appointmentContactId.setText(bundle.getString("table.contact"));
+        appointmentUserId.setText(bundle.getString("table.user"));
+
+        customerTable.setPlaceholder(new Label(bundle.getString("table.empty")));
+        customerId.setText(bundle.getString("table.customer"));
+        customerName.setText(bundle.getString("table.name"));
+        customerAddress.setText(bundle.getString("table.address"));
+        customerPostalCode.setText(bundle.getString("table.postalCode"));
+        customerPhone.setText(bundle.getString("table.phone"));
+        customerDivisionId.setText(bundle.getString("table.division"));
+
     }
 
-    private void initAppointmentTable() {
+    @FXML private void initAppointmentTable() {
         getAppointmentsArray();
 
+        appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
         appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         appointmentDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         appointmentLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -73,17 +112,19 @@ public class MainViewController extends ViewController implements Initializable 
         appointmentStart.setCellValueFactory(new PropertyValueFactory<>("start"));
         appointmentEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         // cd means cell data
-        appointmentCustomer.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getCustomer().getCustomerName()));
-        appointmentContact.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getContact().getContactName()));
+        appointmentCustomerId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getCustomer().getCustomerId()).asObject());
+        appointmentContactId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getContact().getContactId()).asObject());
+        appointmentUserId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getUser().getUserId()).asObject());
         appointmentTable.setItems(appointments);
     }
 
     private void getAppointmentsArray() {
         try {
             openConnection();
-            queryAppointments(Date.valueOf(selectedDate.getValue()));
+            queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
+                    byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected());
         } catch (SQLException e) {
-            showAlert(e);
+            showErrorAlert(e);
         } finally {
             closeConnection();
         }
@@ -91,7 +132,14 @@ public class MainViewController extends ViewController implements Initializable 
         appointments = FXCollections.observableArrayList(getAppointments());
     }
 
-    @FXML private void handleAppointmentDateSelect() {
+    @FXML private void handleScheduleView() {
+        if (byDayRadioButton.isSelected())
+            appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.day")));
+        else if (byWeekRadioButton.isSelected())
+            appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.week")));
+        else
+            appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.month")));
+
         initAppointmentTable();
     }
 
