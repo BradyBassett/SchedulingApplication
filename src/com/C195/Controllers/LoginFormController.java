@@ -47,7 +47,7 @@ public class LoginFormController extends ViewController implements Initializable
             queryUser(usernameField.getText(), passwordField.getText());
             loginValidation();
         } catch (NullPointerException | SQLException e) {
-            showAlert(e);
+            showErrorAlert(e);
             errorMessage = e.getMessage();
             successfulLogin = false;
         } finally {

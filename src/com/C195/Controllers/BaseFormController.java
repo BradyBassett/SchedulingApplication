@@ -9,7 +9,7 @@ public abstract class BaseFormController {
     protected final static Locale locale = Locale.getDefault();
     protected final static ResourceBundle bundle = ResourceBundle.getBundle("com.C195.Resources.language", locale);
 
-    protected void showAlert(Exception e) {
+    protected void showErrorAlert(Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR, e.toString());
         alert.showAndWait();
     }
