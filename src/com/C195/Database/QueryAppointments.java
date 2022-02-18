@@ -26,19 +26,25 @@ public abstract class QueryAppointments extends Query {
         appointments.add(appointment);
     }
 
-    public static void queryAppointments(Date date) throws SQLException {
+    public static void queryAppointments(Date date, boolean daySelected, boolean weekSelected, boolean monthSelected) throws SQLException {
         appointments = new ArrayList<>();
         String statement = "SELECT * " +
                            "FROM appointments " +
-                           "WHERE User_ID=" + getCurrentUser().getUserId() + " " +
-                           "AND Start BETWEEN '" + date + "' AND '" + date + " 23:59:59';";
+                           "WHERE User_ID=" + getCurrentUser().getUserId();
+        if (daySelected)
+            statement += " AND (DAY(Start)=DAY('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
+        else if (weekSelected)
+            statement += " AND (WEEK(Start)=WEEK('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
+        else if (monthSelected)
+            statement += " AND (MONTH(Start)=MONTH('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
+        else
+            statement += ";";
 
         setPreparedStatement(connection, statement);
         PreparedStatement preparedStatement = getPreparedStatement();
         preparedStatement.execute();
         ResultSet results = preparedStatement.getResultSet();
         if (results.next()) {
-
             queryCustomer(results.getInt("Customer_ID"));
             queryContact(results.getInt("Contact_ID"));
             Appointment appointment = new Appointment(results.getInt("Appointment_ID"),
