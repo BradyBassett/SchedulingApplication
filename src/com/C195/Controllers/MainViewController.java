@@ -124,7 +124,7 @@ public class MainViewController extends ViewController implements Initializable 
             queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
                     byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected());
         } catch (SQLException e) {
-            showErrorAlert(e);
+            showAlert(e);
         } finally {
             closeConnection();
         }
