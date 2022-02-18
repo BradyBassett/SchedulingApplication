@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class ViewController extends BaseFormController  {
+public class ViewController extends BaseController {
     public void showView(Stage stage, String view) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(view)));
