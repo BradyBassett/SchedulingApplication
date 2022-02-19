@@ -4,11 +4,13 @@ import com.C195.Models.Appointment;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -143,8 +145,8 @@ public class MainViewController extends ViewController implements Initializable 
         initAppointmentTable();
     }
 
-    @FXML private void handleAppointmentAdd() {
-
+    @FXML private void handleAppointmentAdd(ActionEvent e) throws IOException {
+        showView(e, "../Views/appointmentView.fxml");
     }
 
     @FXML private void handleAppointmentModify() {
@@ -152,6 +154,18 @@ public class MainViewController extends ViewController implements Initializable 
     }
 
     @FXML private void handleAppointmentDelete() {
+
+    }
+
+    @FXML private void handleCustomerAdd(ActionEvent e) throws IOException {
+        showView(e, "../Views/customerView.fxml");
+    }
+
+    @FXML private void handleCustomerModify() {
+
+    }
+
+    @FXML private void handleCustomerDelete() {
 
     }
 }
