@@ -1,6 +1,7 @@
 package com.C195.Controllers;
 
 import com.C195.Models.Appointment;
+import com.C195.Models.Customer;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,9 +22,12 @@ import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
 import static com.C195.Database.QueryAppointments.getAppointments;
 import static com.C195.Database.QueryAppointments.queryAppointments;
+import static com.C195.Database.QueryCustomers.getCustomers;
+import static com.C195.Database.QueryCustomers.queryCustomers;
 
 public class MainViewController extends ViewController implements Initializable {
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+    private ObservableList<Customer> customers = FXCollections.observableArrayList();
     @FXML private Label appointmentsLabel;
     @FXML private Label customersLabel;
     @FXML private Tab appointmentsTab;
@@ -49,13 +53,13 @@ public class MainViewController extends ViewController implements Initializable 
     @FXML private TableColumn<Appointment, Integer> appointmentCustomerId;
     @FXML private TableColumn<Appointment, Integer> appointmentContactId;
     @FXML private TableColumn<Appointment, Integer> appointmentUserId;
-    @FXML private TableView<Appointment> customerTable;
-    @FXML private TableColumn<Appointment, Integer> customerId;
-    @FXML private TableColumn<Appointment, String> customerName;
-    @FXML private TableColumn<Appointment, String> customerAddress;
-    @FXML private TableColumn<Appointment, String> customerPostalCode;
-    @FXML private TableColumn<Appointment, String> customerPhone;
-    @FXML private TableColumn<Appointment, Integer> customerDivisionId;
+    @FXML private TableView<Customer> customerTable;
+    @FXML private TableColumn<Customer, Integer> customerId;
+    @FXML private TableColumn<Customer, String> customerName;
+    @FXML private TableColumn<Customer, String> customerAddress;
+    @FXML private TableColumn<Customer, String> customerPostalCode;
+    @FXML private TableColumn<Customer, String> customerPhone;
+    @FXML private TableColumn<Customer, Integer> customerDivisionId;
 
 
 
@@ -63,6 +67,7 @@ public class MainViewController extends ViewController implements Initializable 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initText();
         initAppointmentTable();
+        initCustomerTable();
     }
 
     private void initText() {
@@ -104,7 +109,7 @@ public class MainViewController extends ViewController implements Initializable 
     }
 
     @FXML private void initAppointmentTable() {
-        getAppointmentsArray();
+        setAppointments();
 
         appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
         appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -120,7 +125,7 @@ public class MainViewController extends ViewController implements Initializable 
         appointmentTable.setItems(appointments);
     }
 
-    private void getAppointmentsArray() {
+    private void setAppointments() {
         try {
             openConnection();
             queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
@@ -155,6 +160,32 @@ public class MainViewController extends ViewController implements Initializable 
 
     @FXML private void handleAppointmentDelete() {
 
+    }
+
+    private void initCustomerTable() {
+        setCustomers();
+
+        customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        customerName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        customerAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        customerPostalCode.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
+        customerPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        // cd means cell data
+        customerDivisionId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getDivision().getDivisionID()).asObject());
+        customerTable.setItems(customers);
+    }
+
+    private void setCustomers() {
+        try {
+            openConnection();
+            queryCustomers();
+        } catch (SQLException e) {
+            showAlert(e);
+        } finally {
+            closeConnection();
+        }
+
+        customers = FXCollections.observableArrayList(getCustomers());
     }
 
     @FXML private void handleCustomerAdd(ActionEvent e) throws IOException {
