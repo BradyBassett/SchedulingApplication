@@ -3,12 +3,10 @@ package com.C195.Controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,7 +36,7 @@ public class LoginViewController extends ViewController implements Initializable
         zoneLabel.setText(String.valueOf(locale));
     }
 
-    @FXML private void onLogin(ActionEvent event) {
+    @FXML private void onLogin(ActionEvent event) throws IOException {
         boolean successfulLogin = true;
         String errorMessage = "N/A";
 
@@ -46,9 +44,9 @@ public class LoginViewController extends ViewController implements Initializable
             openConnection();
             queryUser(usernameField.getText(), passwordField.getText());
             loginValidation();
-        } catch (NullPointerException | SQLException e) {
-            showAlert(e);
-            errorMessage = e.getMessage();
+        } catch (NullPointerException | SQLException exception) {
+            showAlert(exception);
+            errorMessage = exception.getMessage();
             successfulLogin = false;
         } finally {
             closeConnection();
@@ -56,8 +54,7 @@ public class LoginViewController extends ViewController implements Initializable
 
         logLoginAttempt(successfulLogin, errorMessage);
         if (successfulLogin) {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            showView(stage, "../Views/mainView.fxml");
+            showView(event, "../Views/mainView.fxml");
         }
     }
 
