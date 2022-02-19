@@ -44,7 +44,7 @@ public abstract class QueryAppointments extends Query {
         PreparedStatement preparedStatement = getPreparedStatement();
         preparedStatement.execute();
         ResultSet results = preparedStatement.getResultSet();
-        if (results.next()) {
+        while (results.next()) {
             queryCustomer(results.getInt("Customer_ID"));
             queryContact(results.getInt("Contact_ID"));
             Appointment appointment = new Appointment(results.getInt("Appointment_ID"),
