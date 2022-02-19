@@ -2,28 +2,33 @@
     -fx-primary-bg: #c3cfea;
     -fx-secondary-bg: #2c8599;
     -fx-primary-btn: #c43c5c;
+    -fx-secondary-btn: #fcfcfc;
 }
 
 .primary-bg {
     -fx-background-color: -fx-primary-bg;
 }
 
-Button {
-    -fx-background-color: -fx-primary-btn;
-    -fx-background-radius: 10 10 10 10;
-}
-
-TextField {
-    -fx-background-radius: 10 10 10 10;
-}
-
-PasswordField {
-    -fx-background-radius: 10 10 10 10;
-}
-
-.container {
+.secondary-bg {
     -fx-background-color: -fx-secondary-bg;
-    -fx-background-radius: 10 10 10 10;
+}
+
+.primary-btn {
+    -fx-background-color: -fx-primary-btn;
+    -fx-border-color: -fx-primary-btn;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10 10 10 10;
+}
+
+.secondary-btn {
+    -fx-background-color: -fx-secondary-btn;
+    -fx-border-color: -fx-primary-btn;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10 10 10 10;
+}
+
+.rounded {
+    -fx-background-radius: 10 10 10 10 !important;
 }
 
 .table-view .table-cell {
