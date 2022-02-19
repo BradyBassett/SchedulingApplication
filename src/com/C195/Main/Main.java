@@ -12,6 +12,7 @@ public class Main extends Application {
         ViewController viewController = new ViewController();
         viewController.showView(stage, "../Views/loginView.fxml");
         Image image = new Image("com/C195/Resources/icon.png");
+        stage.setResizable(false);
         stage.getIcons().add(image);
     }
 
