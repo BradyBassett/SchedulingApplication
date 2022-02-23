@@ -1,5 +1,6 @@
 package com.C195.Controllers;
 
+import com.C195.Models.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,16 +19,35 @@ public class ViewController extends BaseController {
             stage.setTitle(bundle.getString("app.title"));
             stage.setScene(scene);
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    protected void showView(ActionEvent e, String view) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(view)));
-        Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    protected void showView(ActionEvent event, String view) {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(view)));
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    protected void showView(ActionEvent event, Customer customer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("../Views/customerView.fxml")));
+            Parent root = loader.load();
+            CustomerViewController customerViewController = loader.getController();
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            customerViewController.initCustomerData(customer);
+            stage.show();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
