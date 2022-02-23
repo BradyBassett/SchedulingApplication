@@ -2,7 +2,6 @@ package com.C195.Database;
 
 import com.C195.Models.User;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,11 +23,7 @@ public abstract class QueryUsers extends Query {
                            "FROM users " +
                            "WHERE User_Name='" + username + "' " +
                            "AND Password='" + password + "';";
-
-        setPreparedStatement(connection, statement);
-        PreparedStatement preparedStatement = getPreparedStatement();
-        preparedStatement.execute();
-        ResultSet results = preparedStatement.getResultSet();
+        ResultSet results = getResults(connection, statement);
         if (results.next()) {
             User user = new User(results.getInt("User_ID"), results.getString("User_Name"),
                     results.getString("Password"));

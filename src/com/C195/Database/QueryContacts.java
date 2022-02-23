@@ -2,7 +2,6 @@ package com.C195.Database;
 
 import com.C195.Models.Contact;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,11 +22,7 @@ public abstract class QueryContacts extends Query {
         String statement = "SELECT * " +
                 "FROM contacts " +
                 "WHERE Contact_ID=" + contactId + ";";
-
-        setPreparedStatement(connection, statement);
-        PreparedStatement preparedStatement = getPreparedStatement();
-        preparedStatement.execute();
-        ResultSet results = preparedStatement.getResultSet();
+        ResultSet results = getResults(connection, statement);
         if (results.next()) {
             Contact contact = new Contact(contactId, results.getString("Contact_Name"), results.getString("Email"));
             setCurrentContact(contact);

@@ -2,16 +2,13 @@ package com.C195.Database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class Query {
-    private static PreparedStatement preparedStatement;
-
-    protected static void setPreparedStatement(Connection connection, String statement) throws SQLException {
-        preparedStatement = connection.prepareStatement(statement);
-    }
-
-    protected static PreparedStatement getPreparedStatement() {
-        return preparedStatement;
+    protected static ResultSet getResults(Connection connection, String statement) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(statement);
+        preparedStatement.execute();
+        return preparedStatement.getResultSet();
     }
 }

@@ -3,7 +3,6 @@ package com.C195.Database;
 import com.C195.Models.Appointment;
 
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,11 +38,7 @@ public abstract class QueryAppointments extends Query {
             statement += " AND (MONTH(Start)=MONTH('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
         else
             statement += ";";
-
-        setPreparedStatement(connection, statement);
-        PreparedStatement preparedStatement = getPreparedStatement();
-        preparedStatement.execute();
-        ResultSet results = preparedStatement.getResultSet();
+        ResultSet results = getResults(connection, statement);
         while (results.next()) {
             queryCustomer(results.getInt("Customer_ID"));
             queryContact(results.getInt("Contact_ID"));
