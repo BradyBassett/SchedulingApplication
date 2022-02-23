@@ -62,7 +62,7 @@
             <String fx:value="secondary-bg" />
          </styleClass>
       </AnchorPane>
-      <Button fx:id="loginBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="384.0" layoutY="483.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="51.0" prefWidth="512.0" textAlignment="CENTER" textFill="WHITE">
+      <Button fx:id="loginBtn" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="384.0" layoutY="483.0" mnemonicParsing="false" onAction="#onLogin" prefHeight="51.0" prefWidth="512.0" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="System Bold" size="24.0" />
          </font>
