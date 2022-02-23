@@ -2,7 +2,6 @@ package com.C195.Database;
 
 import com.C195.Models.Customer;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,10 +30,7 @@ public abstract class QueryCustomers extends Query {
         String statement = "SELECT * " +
                 "FROM customers " +
                 "WHERE Customer_ID=" + customerId + ";";
-        setPreparedStatement(connection, statement);
-        PreparedStatement preparedStatement = getPreparedStatement();
-        preparedStatement.execute();
-        ResultSet results = preparedStatement.getResultSet();
+        ResultSet results = getResults(connection, statement);
         if (results.next()) {
             queryDivision(results.getInt("Division_ID"));
             Customer customer = new Customer(customerId, results.getString("Customer_Name"),
@@ -47,10 +43,7 @@ public abstract class QueryCustomers extends Query {
     public static void queryCustomers() throws SQLException {
         customers = new ArrayList<>();
         String statement = "SELECT * FROM customers";
-        setPreparedStatement(connection, statement);
-        PreparedStatement preparedStatement = getPreparedStatement();
-        preparedStatement.execute();
-        ResultSet results = preparedStatement.getResultSet();
+        ResultSet results = getResults(connection, statement);
         while (results.next()) {
             queryDivision(results.getInt("Division_ID"));
             Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"),
@@ -58,5 +51,15 @@ public abstract class QueryCustomers extends Query {
                     results.getString("Phone"), getCurrentDivision());
             customers.add(customer);
         }
+    }
+
+    public static int queryMaxId() throws SQLException {
+        int nextId = 1;
+        String statement = "SELECT MAX(Customer_ID) FROM customers";
+        ResultSet results = getResults(connection, statement);
+        if (results.next()) {
+            nextId = results.getInt(1);
+        }
+        return nextId;
     }
 }
