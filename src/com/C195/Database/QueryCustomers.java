@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static com.C195.Controllers.BaseController.getCurrentUser;
 import static com.C195.Database.JDBC.connection;
 import static com.C195.Database.QueryDivisions.queryDivision;
 
@@ -47,5 +48,28 @@ public abstract class QueryCustomers extends Query {
             nextId = results.getInt(1);
         }
         return nextId;
+    }
+
+    public static void createNewCustomer(Customer customer) throws SQLException {
+        String statement = "INSERT INTO customers " +
+                           "VALUES (" + customer.getCustomerId() + ", '" + customer.getCustomerName() + "', '"
+                           + customer.getAddress() + "', '" + customer.getPostalCode() + "', '" + customer.getPhone() + "', " +
+                           "NOW(), '" + getCurrentUser().getUserName() + "', " + "NOW(), '" + getCurrentUser().getUserName() +
+                           "', " + customer.getDivision().getDivisionID() + ");";
+        getResults(connection, statement);
+    }
+
+    public static void modifyCustomer(Customer customer) throws SQLException {
+        String statement = "UPDATE customers SET Customer_Name='" + customer.getCustomerName() +
+                           "', Address='" + customer.getAddress() + "', Postal_Code='" + customer.getPostalCode() +
+                           "', Phone='" + customer.getPhone() + "', Last_Update=NOW(), Last_Updated_By='" +
+                           getCurrentUser().getUserName() + "', Division_ID=" + customer.getDivision().getDivisionID() +
+                           " WHERE Customer_ID=" + customer.getCustomerId() + ";";
+        getResults(connection, statement);
+    }
+
+    public static void deleteCustomer(int customerId) throws SQLException {
+        String statement = "DELETE FROM customers WHERE Customer_ID=" + customerId + ";";
+        getResults(connection, statement);
     }
 }
