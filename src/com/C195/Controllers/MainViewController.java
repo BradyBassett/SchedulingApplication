@@ -62,7 +62,6 @@ public class MainViewController extends ViewController implements Initializable 
     @FXML private TableColumn<Customer, Integer> customerDivisionId;
 
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initText();
@@ -173,6 +172,17 @@ public class MainViewController extends ViewController implements Initializable 
         // cd means cell data
         customerDivisionId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getDivision().getDivisionID()).asObject());
         customerTable.setItems(customers);
+
+        customerTable.setRowFactory(tv -> {
+            TableRow<Customer> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (tv.getSelectionModel().getSelectedItem() != null) {
+                    modifyCustomerButton.setDisable(false);
+                    deleteCustomerButton.setDisable(false);
+                }
+            });
+            return row;
+        });
     }
 
     private void setCustomers() {
@@ -188,12 +198,13 @@ public class MainViewController extends ViewController implements Initializable 
         customers = FXCollections.observableArrayList(getCustomers());
     }
 
-    @FXML private void handleCustomerAdd(ActionEvent e) throws IOException {
+    @FXML private void handleCustomerAdd(ActionEvent e) {
         showView(e, "../Views/customerView.fxml");
     }
 
-    @FXML private void handleCustomerModify() {
-
+    @FXML private void handleCustomerModify(ActionEvent e) {
+        Customer customer = customerTable.getSelectionModel().getSelectedItem();
+        showView(e, customer);
     }
 
     @FXML private void handleCustomerDelete() {
