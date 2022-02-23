@@ -1,10 +1,10 @@
 package com.C195.Controllers;
 
-import com.C195.Database.QueryCustomers;
 import com.C195.Models.Country;
 import com.C195.Models.Customer;
 import com.C195.Models.Division;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,21 +13,20 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryCountries.getCountries;
 import static com.C195.Database.QueryCountries.queryCountries;
 import static com.C195.Database.QueryCustomers.queryMaxId;
-import static com.C195.Database.QueryDivisions.getDivisions;
 import static com.C195.Database.QueryDivisions.queryDivisions;
 
 public class CustomerViewController extends ViewController implements Initializable {
     private Customer activeCustomer;
+    ObservableList<Country> countries = FXCollections.observableArrayList();
+    ObservableList<Division> divisions = FXCollections.observableArrayList();
     @FXML private Button cancelButton;
     @FXML private Button saveButton;
     @FXML private TextField customerIdField;
@@ -63,9 +62,10 @@ public class CustomerViewController extends ViewController implements Initializa
     private void initCountries() {
         try {
             openConnection();
-            queryCountries();
+            countries = FXCollections.observableArrayList(queryCountries());
         } catch (SQLException e) {
             showAlert(e);
+            return;
         } finally {
             closeConnection();
         }
@@ -82,15 +82,16 @@ public class CustomerViewController extends ViewController implements Initializa
             }
         });
 
-        customerCountryBox.setItems(FXCollections.observableArrayList(getCountries()));
+        customerCountryBox.setItems(countries);
     }
 
     private void initDivisions(int countryId) {
         try {
             openConnection();
-            queryDivisions(countryId);
+            divisions = FXCollections.observableArrayList(queryDivisions(countryId));
         } catch (SQLException e) {
             showAlert(e);
+            return;
         } finally {
             closeConnection();
         }
@@ -107,7 +108,7 @@ public class CustomerViewController extends ViewController implements Initializa
             }
         });
 
-        customerDivisionBox.setItems(FXCollections.observableArrayList(getDivisions()));
+        customerDivisionBox.setItems(divisions);
     }
 
     public void initCustomerData(Customer customer) {
@@ -127,11 +128,11 @@ public class CustomerViewController extends ViewController implements Initializa
         customerDivisionBox.setDisable(false);
     }
 
-    @FXML private void handleCancel(ActionEvent e) throws IOException {
+    @FXML private void handleCancel(ActionEvent e) {
         showView(e, "../Views/mainView.fxml");
     }
 
-    @FXML private void handleSave(ActionEvent e) throws IOException {
+    @FXML private void handleSave(ActionEvent e) {
         showView(e, "../Views/mainView.fxml");
     }
 }

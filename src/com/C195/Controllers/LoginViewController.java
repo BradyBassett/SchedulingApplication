@@ -19,7 +19,6 @@ import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryUsers.getCurrentUser;
 import static com.C195.Database.QueryUsers.queryUser;
 
 

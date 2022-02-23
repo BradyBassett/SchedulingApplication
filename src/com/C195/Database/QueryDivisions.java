@@ -1,5 +1,6 @@
 package com.C195.Database;
 
+import com.C195.Models.Country;
 import com.C195.Models.Division;
 
 import java.sql.ResultSet;
@@ -7,48 +8,33 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static com.C195.Database.JDBC.connection;
-import static com.C195.Database.QueryCountries.getCurrentCountry;
 import static com.C195.Database.QueryCountries.queryCountry;
 
 public abstract class QueryDivisions extends Query {
-    private static Division currentDivision;
-    private static ArrayList<Division> divisions = new ArrayList<>();
-
-    public static Division getCurrentDivision() {
-        return currentDivision;
-    }
-
-    public static ArrayList<Division> getDivisions() {
-        return divisions;
-    }
-
-    private static void setCurrentDivision(Division division) {
-        currentDivision = division;
-    }
-
-    public static void queryDivision(int divisionId) throws SQLException {
+    public static Division queryDivision(int divisionId) throws SQLException {
         String statement = "SELECT * " +
                 "FROM first_level_divisions " +
                 "WHERE Division_ID=" + divisionId + ";";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
-            queryCountry(results.getInt("Country_ID"));
-            Division division = new Division(divisionId, results.getString("Division"), getCurrentCountry());
-            setCurrentDivision(division);
+            Country country = queryCountry(results.getInt("Country_ID"));
+            return new Division(divisionId, results.getString("Division"), country);
         }
+        return null;
     }
 
-    public static void queryDivisions(int countryId) throws SQLException {
-        divisions = new ArrayList<>();
+    public static ArrayList<Division> queryDivisions(int countryId) throws SQLException {
+        ArrayList<Division> divisions = new ArrayList<>();
         String statement = "SELECT * " +
                            "FROM first_level_divisions " +
                            "WHERE Country_ID=" + countryId + ";";
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
-            QueryCountries.queryCountry(countryId);
+            Country country = queryCountry(countryId);
             Division division = new Division(results.getInt("Division_ID"), results.getString("Division"),
-                    getCurrentCountry());
+                    country);
             divisions.add(division);
         }
+        return divisions;
     }
 }

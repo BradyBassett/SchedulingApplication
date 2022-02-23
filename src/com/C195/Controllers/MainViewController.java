@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -20,9 +19,7 @@ import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryAppointments.getAppointments;
 import static com.C195.Database.QueryAppointments.queryAppointments;
-import static com.C195.Database.QueryCustomers.getCustomers;
 import static com.C195.Database.QueryCustomers.queryCustomers;
 
 public class MainViewController extends ViewController implements Initializable {
@@ -127,15 +124,13 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
-            queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
-                    byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected());
+            appointments = FXCollections.observableArrayList(queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
+                    byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected())) ;
         } catch (SQLException e) {
             showAlert(e);
         } finally {
             closeConnection();
         }
-
-        appointments = FXCollections.observableArrayList(getAppointments());
     }
 
     @FXML private void handleScheduleView() {
@@ -149,7 +144,7 @@ public class MainViewController extends ViewController implements Initializable 
         initAppointmentTable();
     }
 
-    @FXML private void handleAppointmentAdd(ActionEvent e) throws IOException {
+    @FXML private void handleAppointmentAdd(ActionEvent e) {
         showView(e, "../Views/appointmentView.fxml");
     }
 
@@ -188,14 +183,12 @@ public class MainViewController extends ViewController implements Initializable 
     private void setCustomers() {
         try {
             openConnection();
-            queryCustomers();
+            customers = FXCollections.observableArrayList(queryCustomers());
         } catch (SQLException e) {
             showAlert(e);
         } finally {
             closeConnection();
         }
-
-        customers = FXCollections.observableArrayList(getCustomers());
     }
 
     @FXML private void handleCustomerAdd(ActionEvent e) {
