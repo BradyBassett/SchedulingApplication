@@ -57,7 +57,7 @@ public class LoginViewController extends ViewController implements Initializable
         }
     }
 
-    private void loginValidation() throws SQLException {
+    private void loginValidation() {
         if (usernameField.getText().isEmpty())
             throw new NullPointerException(bundle.getString("error.nullUsername"));
         if (passwordField.getText().isEmpty())
