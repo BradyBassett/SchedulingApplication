@@ -16,6 +16,7 @@ import javafx.util.StringConverter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
@@ -131,7 +132,7 @@ public class CustomerViewController extends ViewController implements Initializa
             validateItems();
             // todo on save either update the customer or add a new one
             showView(event, "../Views/mainView.fxml");
-        } catch (NullPointerException exception) {
+        } catch (NullPointerException | IllegalArgumentException exception) {
             showAlert(exception);
         }
     }
@@ -141,32 +142,28 @@ public class CustomerViewController extends ViewController implements Initializa
     }
 
     private void validateItems() {
-        if (customerNameField.getText().isEmpty())
-            throw new NullPointerException(bundle.getString("error.nullNameField"));
-        if (customerAddressField.getText().isEmpty())
-            throw new NullPointerException(bundle.getString("error.nullAddressField"));
-        validateAddress();
-        if (customerPostalCodeField.getText().isEmpty())
-            throw new NullPointerException(bundle.getString("error.nullPostalCodeField"));
-        validatePostal();
-        if (customerPhoneField.getText().isEmpty())
-            throw new NullPointerException(bundle.getString("error.nullPhoneField"));
-        validatePhone();
+        validateFieldNotEmpty(customerNameField.getText(), bundle.getString("error.nullNameField"));
+        validateFieldNotEmpty(customerAddressField.getText(), bundle.getString("error.nullAddressField"));
+        validateField("\\d+\\s[\\w\\s]+", customerAddressField.getText(), bundle.getString("error.invalidAddress"));
+        validateFieldNotEmpty(customerPostalCodeField.getText(), bundle.getString("error.nullPostalCodeField"));
+        validateField("[a-zA-Z\\d]{5}", customerPostalCodeField.getText(), bundle.getString("error.invalidPostal"));
+        validateFieldNotEmpty(customerPhoneField.getText(), bundle.getString("error.nullPhoneField"));
+        validateField("^(\\+?\\d{1,3}-?( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$",
+                customerPhoneField.getText(), bundle.getString("error.invalidPhone"));
+
         if (customerCountryBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullCountryBox"));
         if (customerDivisionBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullDivisionBox"));
     }
 
-    private void validateAddress() {
-        // todo validate address
+    private void validateFieldNotEmpty(String field, String error) {
+        if (field.isEmpty())
+            throw new NullPointerException(error);
     }
 
-    private void validatePostal() {
-        // todo validate postal code
-    }
-
-    private void validatePhone() {
-        // todo validate phone number
+    private void validateField(String regex, String field, String error) {
+        if (!Pattern.matches(regex, field))
+            throw new IllegalArgumentException(error);
     }
 }
