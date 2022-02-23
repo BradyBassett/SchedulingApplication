@@ -1,5 +1,6 @@
 package com.C195.Controllers;
 
+import com.C195.Database.QueryCustomers;
 import com.C195.Models.Appointment;
 import com.C195.Models.Customer;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -15,11 +16,13 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryAppointments.queryAppointments;
+import static com.C195.Database.QueryAppointments.queryAllAppointments;
+import static com.C195.Database.QueryAppointments.queryUserAppointments;
 import static com.C195.Database.QueryCustomers.queryCustomers;
 
 public class MainViewController extends ViewController implements Initializable {
@@ -124,7 +127,7 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
-            appointments = FXCollections.observableArrayList(queryAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
+            appointments = FXCollections.observableArrayList(queryUserAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
                     byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected())) ;
         } catch (SQLException e) {
             showAlert(e);
@@ -201,6 +204,25 @@ public class MainViewController extends ViewController implements Initializable 
     }
 
     @FXML private void handleCustomerDelete() {
+        try {
+            openConnection();
+            validateDelete();
+            QueryCustomers.deleteCustomer(customerTable.getSelectionModel().getSelectedItem().getCustomerId());
+            showAlert(bundle.getString("alert.customerDeleted"));
+        } catch (SQLException | IllegalAccessException e) {
+            showAlert(e);
+        } finally {
+            closeConnection();
+        }
+        initCustomerTable();
+    }
 
+    private void validateDelete() throws IllegalAccessException, SQLException {
+        ArrayList<Appointment> allAppointments = queryAllAppointments();
+        for (Appointment appointment : allAppointments) {
+            if (appointment.getCustomer().getCustomerId() == customerTable.getSelectionModel().getSelectedItem().getCustomerId()) {
+                throw new IllegalAccessException(bundle.getString("error.customerDependencyPresent"));
+            }
+        }
     }
 }
