@@ -21,12 +21,11 @@ import java.util.regex.Pattern;
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
 import static com.C195.Database.QueryCountries.queryCountries;
-import static com.C195.Database.QueryCustomers.queryMaxId;
+import static com.C195.Database.QueryCustomers.*;
 import static com.C195.Database.QueryDivisions.queryDivisions;
 
 public class CustomerViewController extends ViewController implements Initializable {
-    ObservableList<Country> countries = FXCollections.observableArrayList();
-    ObservableList<Division> divisions = FXCollections.observableArrayList();
+    public boolean newCustomer = true;
     @FXML private Button cancelButton;
     @FXML private Button saveButton;
     @FXML private TextField customerIdField;
@@ -60,6 +59,7 @@ public class CustomerViewController extends ViewController implements Initializa
     }
 
     private void initCountries() {
+        ObservableList<Country> countries;
         try {
             openConnection();
             countries = FXCollections.observableArrayList(queryCountries());
@@ -86,6 +86,7 @@ public class CustomerViewController extends ViewController implements Initializa
     }
 
     private void initDivisions(int countryId) {
+        ObservableList<Division> divisions;
         try {
             openConnection();
             divisions = FXCollections.observableArrayList(queryDivisions(countryId));
@@ -130,10 +131,21 @@ public class CustomerViewController extends ViewController implements Initializa
     @FXML private void handleSave(ActionEvent event) {
         try {
             validateItems();
-            // todo on save either update the customer or add a new one
+            openConnection();
+            if (newCustomer){
+                createNewCustomer(new Customer(Integer.parseInt(customerIdField.getText()),
+                        customerNameField.getText(), customerAddressField.getText(), customerPostalCodeField.getText(),
+                        customerPhoneField.getText(), customerDivisionBox.getValue()));
+            } else {
+                modifyCustomer(new Customer(Integer.parseInt(customerIdField.getText()),
+                        customerNameField.getText(), customerAddressField.getText(), customerPostalCodeField.getText(),
+                        customerPhoneField.getText(), customerDivisionBox.getValue()));
+            }
             showView(event, "../Views/mainView.fxml");
-        } catch (NullPointerException | IllegalArgumentException exception) {
+        } catch (NullPointerException | IllegalArgumentException | SQLException exception) {
             showAlert(exception);
+        } finally {
+            closeConnection();
         }
     }
 
