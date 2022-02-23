@@ -5,19 +5,10 @@ import com.C195.Models.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.C195.Controllers.BaseController.setCurrentUser;
 import static com.C195.Database.JDBC.*;
 
 public abstract class QueryUsers extends Query {
-    private static User currentUser;
-
-    public static User getCurrentUser() {
-        return currentUser;
-    }
-
-    private static void setCurrentUser(User user) {
-        currentUser = user;
-    }
-
     public static void queryUser(String username, String password) throws SQLException {
         String statement = "SELECT * " +
                            "FROM users " +
