@@ -9,39 +9,66 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" styleClass="primary-bg" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.C195.Controllers.CustomerViewController">
    <children>
       <AnchorPane layoutX="365.0" layoutY="97.0" prefHeight="520.0" prefWidth="550.0">
          <children>
-            <TextField fx:id="customerIdField" layoutX="155.0" layoutY="75.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry">
+            <TextField fx:id="customerIdField" disable="true" layoutX="155.0" layoutY="75.0" prefHeight="35.0" prefWidth="240.0">
                <font>
-                  <Font size="14.0" />
+                  <Font size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass>
             </TextField>
-            <TextField fx:id="customerNameField" layoutX="155.0" layoutY="125.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry">
+            <TextField fx:id="customerNameField" layoutX="155.0" layoutY="125.0" prefHeight="35.0" prefWidth="240.0">
                <font>
-                  <Font size="14.0" />
+                  <Font size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass>
             </TextField>
-            <TextField fx:id="customerAddressField" layoutX="155.0" layoutY="175.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry">
+            <TextField fx:id="customerAddressField" layoutX="155.0" layoutY="175.0" prefHeight="35.0" prefWidth="240.0">
                <font>
-                  <Font size="14.0" />
+                  <Font size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass>
             </TextField>
-            <TextField fx:id="customerPostalCodeField" layoutX="155.0" layoutY="225.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry">
+            <TextField fx:id="customerPostalCodeField" layoutX="155.0" layoutY="225.0" prefHeight="35.0" prefWidth="240.0">
                <font>
-                  <Font size="14.0" />
+                  <Font size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass>
             </TextField>
-            <TextField fx:id="customerPhoneField" layoutX="155.0" layoutY="275.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry">
+            <TextField fx:id="customerPhoneField" layoutX="155.0" layoutY="275.0" prefHeight="35.0" prefWidth="240.0">
                <font>
-                  <Font size="14.0" />
+                  <Font size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass>
             </TextField>
-            <ComboBox fx:id="countriesBox" layoutX="155.0" layoutY="325.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry" />
-            <ComboBox fx:id="divisionsBox" layoutX="155.0" layoutY="375.0" prefHeight="35.0" prefWidth="240.0" styleClass="dataEntry" />
-            <Button fx:id="cancelButton" layoutX="248.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleCancel" textFill="#c43c5c" AnchorPane.leftAnchor="235.0">
+            <ComboBox fx:id="customerCountryBox" layoutX="155.0" layoutY="325.0" onAction="#handleCountrySelected" prefHeight="35.0" prefWidth="240.0">
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass></ComboBox>
+            <ComboBox fx:id="customerDivisionBox" disable="true" layoutX="155.0" layoutY="375.0" prefHeight="35.0" prefWidth="240.0">
+               <styleClass>
+                  <String fx:value="dataEntry" />
+                  <String fx:value="rounded" />
+               </styleClass></ComboBox>
+            <Button fx:id="cancelButton" cancelButton="true" layoutX="290.0" layoutY="468.0" minWidth="50.0" mnemonicParsing="false" onAction="#handleCancel" textFill="#c43c5c" AnchorPane.leftAnchor="290.0">
                <font>
                   <Font size="18.0" />
                </font>
@@ -53,7 +80,7 @@
                   <String fx:value="rounded" />
                </styleClass>
             </Button>
-            <Button fx:id="saveButton" alignment="CENTER_RIGHT" disable="true" layoutX="275.0" layoutY="468.0" mnemonicParsing="false" onAction="#handleSave" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="235.0">
+            <Button fx:id="saveButton" alignment="CENTER_RIGHT" defaultButton="true" disable="true" layoutX="232.0" layoutY="468.0" minWidth="50.0" mnemonicParsing="false" onAction="#handleSave" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="290.0">
                <font>
                   <Font size="18.0" />
                </font>
