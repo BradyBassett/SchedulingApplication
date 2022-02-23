@@ -45,6 +45,7 @@ public class ViewController extends BaseController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             customerViewController.initCustomerData(customer);
+            customerViewController.newCustomer = false;
             stage.show();
         } catch (IOException exception) {
             exception.printStackTrace();
