@@ -1,7 +1,5 @@
 package com.C195.Models;
 
-import java.util.Objects;
-
 public class User {
     private int userId;
     private String userName;
