@@ -31,12 +31,12 @@ public class LoginViewController extends ViewController implements Initializable
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        usernameField.setPromptText(bundle.getString("login.username"));
+        usernameField.setPromptText(bundle.getString("field.username"));
         loginBtn.setText(bundle.getString("button.login"));
         zoneLabel.setText(String.valueOf(locale));
     }
 
-    @FXML private void onLogin(ActionEvent event) throws IOException {
+    @FXML private void onLogin(ActionEvent event) {
         boolean successfulLogin = true;
         String errorMessage = "N/A";
 
