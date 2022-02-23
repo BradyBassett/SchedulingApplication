@@ -15,7 +15,7 @@ import static com.C195.Database.QueryContacts.queryContact;
 import static com.C195.Database.QueryCustomers.queryCustomer;
 
 public abstract class QueryAppointments extends Query {
-    public static ArrayList<Appointment> queryAppointments(Date date, boolean daySelected, boolean weekSelected, boolean monthSelected) throws SQLException {
+    public static ArrayList<Appointment> queryUserAppointments(Date date, boolean daySelected, boolean weekSelected, boolean monthSelected) throws SQLException {
         ArrayList<Appointment> appointments = new ArrayList<>();
         String statement = "SELECT * " +
                            "FROM appointments " +
@@ -28,6 +28,16 @@ public abstract class QueryAppointments extends Query {
             statement += " AND (MONTH(Start)=MONTH('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
         else
             statement += ";";
+        return accessResults(appointments, statement);
+    }
+
+    public static ArrayList<Appointment> queryAllAppointments() throws SQLException {
+        ArrayList<Appointment> appointments = new ArrayList<>();
+        String statement = "SELECT * FROM appointments";
+        return accessResults(appointments, statement);
+    }
+
+    private static ArrayList<Appointment> accessResults(ArrayList<Appointment> appointments, String statement) throws SQLException {
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
             Customer customer = queryCustomer(results.getInt("Customer_ID"));
