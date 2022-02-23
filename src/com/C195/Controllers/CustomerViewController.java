@@ -24,7 +24,6 @@ import static com.C195.Database.QueryCustomers.queryMaxId;
 import static com.C195.Database.QueryDivisions.queryDivisions;
 
 public class CustomerViewController extends ViewController implements Initializable {
-    private Customer activeCustomer;
     ObservableList<Country> countries = FXCollections.observableArrayList();
     ObservableList<Division> divisions = FXCollections.observableArrayList();
     @FXML private Button cancelButton;
@@ -112,14 +111,13 @@ public class CustomerViewController extends ViewController implements Initializa
     }
 
     public void initCustomerData(Customer customer) {
-        activeCustomer = customer;
-        customerIdField.setText(String.valueOf(activeCustomer.getCustomerId()));
-        customerNameField.setText(activeCustomer.getCustomerName());
-        customerAddressField.setText(activeCustomer.getAddress());
-        customerPostalCodeField.setText(activeCustomer.getPostalCode());
-        customerPhoneField.setText(activeCustomer.getPhone());
-        customerCountryBox.setValue(activeCustomer.getDivision().getCountry());
-        customerDivisionBox.setValue(activeCustomer.getDivision());
+        customerIdField.setText(String.valueOf(customer.getCustomerId()));
+        customerNameField.setText(customer.getCustomerName());
+        customerAddressField.setText(customer.getAddress());
+        customerPostalCodeField.setText(customer.getPostalCode());
+        customerPhoneField.setText(customer.getPhone());
+        customerCountryBox.setValue(customer.getDivision().getCountry());
+        customerDivisionBox.setValue(customer.getDivision());
         customerDivisionBox.setDisable(false);
     }
 
@@ -128,11 +126,47 @@ public class CustomerViewController extends ViewController implements Initializa
         customerDivisionBox.setDisable(false);
     }
 
+    @FXML private void handleSave(ActionEvent event) {
+        try {
+            validateItems();
+            // todo on save either update the customer or add a new one
+            showView(event, "../Views/mainView.fxml");
+        } catch (NullPointerException exception) {
+            showAlert(exception);
+        }
+    }
+
     @FXML private void handleCancel(ActionEvent e) {
         showView(e, "../Views/mainView.fxml");
     }
 
-    @FXML private void handleSave(ActionEvent e) {
-        showView(e, "../Views/mainView.fxml");
+    private void validateItems() {
+        if (customerNameField.getText().isEmpty())
+            throw new NullPointerException(bundle.getString("error.nullNameField"));
+        if (customerAddressField.getText().isEmpty())
+            throw new NullPointerException(bundle.getString("error.nullAddressField"));
+        validateAddress();
+        if (customerPostalCodeField.getText().isEmpty())
+            throw new NullPointerException(bundle.getString("error.nullPostalCodeField"));
+        validatePostal();
+        if (customerPhoneField.getText().isEmpty())
+            throw new NullPointerException(bundle.getString("error.nullPhoneField"));
+        validatePhone();
+        if (customerCountryBox.getValue() == null)
+            throw new NullPointerException(bundle.getString("error.nullCountryBox"));
+        if (customerDivisionBox.getValue() == null)
+            throw new NullPointerException(bundle.getString("error.nullDivisionBox"));
+    }
+
+    private void validateAddress() {
+        // todo validate address
+    }
+
+    private void validatePostal() {
+        // todo validate postal code
+    }
+
+    private void validatePhone() {
+        // todo validate phone number
     }
 }
