@@ -40,8 +40,6 @@ public class CustomerViewController extends ViewController implements Initializa
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cancelButton.setText(bundle.getString("button.cancel"));
         saveButton.setText(bundle.getString("button.save"));
-        customerIdField.setPromptText(bundle.getString("field.id"));
-        customerNameField.setPromptText(bundle.getString("field.name"));
         try {
             openConnection();
             customerIdField.setText(String.valueOf(queryMaxId() + 1));
@@ -50,6 +48,7 @@ public class CustomerViewController extends ViewController implements Initializa
         } finally {
             closeConnection();
         }
+        customerNameField.setPromptText(bundle.getString("field.name"));
         customerAddressField.setPromptText(bundle.getString("field.address"));
         customerPostalCodeField.setPromptText(bundle.getString("field.postalCode"));
         customerPhoneField.setPromptText(bundle.getString("field.phone"));
