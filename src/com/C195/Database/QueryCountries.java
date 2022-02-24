@@ -10,9 +10,7 @@ import static com.C195.Database.JDBC.connection;
 
 public abstract class QueryCountries extends Query {
     public static Country queryCountry(int countryId) throws SQLException {
-        String statement = "SELECT * " +
-                "FROM countries " +
-                "WHERE Country_ID=" + countryId + ";";
+        String statement = "SELECT * FROM countries WHERE Country_ID=" + countryId + ";";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
             return new Country(countryId, results.getString("Country"));

@@ -12,9 +12,7 @@ import static com.C195.Database.QueryCountries.queryCountry;
 
 public abstract class QueryDivisions extends Query {
     public static Division queryDivision(int divisionId) throws SQLException {
-        String statement = "SELECT * " +
-                "FROM first_level_divisions " +
-                "WHERE Division_ID=" + divisionId + ";";
+        String statement = "SELECT * FROM first_level_divisions WHERE Division_ID=" + divisionId + ";";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
             Country country = queryCountry(results.getInt("Country_ID"));
@@ -25,9 +23,7 @@ public abstract class QueryDivisions extends Query {
 
     public static ArrayList<Division> queryDivisions(int countryId) throws SQLException {
         ArrayList<Division> divisions = new ArrayList<>();
-        String statement = "SELECT * " +
-                           "FROM first_level_divisions " +
-                           "WHERE Country_ID=" + countryId + ";";
+        String statement = "SELECT * FROM first_level_divisions WHERE Country_ID=" + countryId + ";";
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
             Country country = queryCountry(countryId);

@@ -13,9 +13,7 @@ import static com.C195.Database.QueryDivisions.queryDivision;
 
 public abstract class QueryCustomers extends Query {
     public static Customer queryCustomer(int customerId) throws SQLException {
-        String statement = "SELECT * " +
-                "FROM customers " +
-                "WHERE Customer_ID=" + customerId + ";";
+        String statement = "SELECT * FROM customers WHERE Customer_ID=" + customerId + ";";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
             Division division = queryDivision(results.getInt("Division_ID"));
@@ -32,9 +30,9 @@ public abstract class QueryCustomers extends Query {
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
             Division division = queryDivision(results.getInt("Division_ID"));
-            Customer customer = new Customer(results.getInt("Customer_ID"), results.getString("Customer_Name"),
-                    results.getString("Address"), results.getString("Postal_Code"),
-                    results.getString("Phone"), division);
+            Customer customer = new Customer(results.getInt("Customer_ID"),
+                    results.getString("Customer_Name"), results.getString("Address"),
+                    results.getString("Postal_Code"), results.getString("Phone"), division);
             customers.add(customer);
         }
         return customers;
@@ -51,10 +49,10 @@ public abstract class QueryCustomers extends Query {
     }
 
     public static void createNewCustomer(Customer customer) throws SQLException {
-        String statement = "INSERT INTO customers " +
-                           "VALUES (" + customer.getCustomerId() + ", '" + customer.getCustomerName() + "', '"
-                           + customer.getAddress() + "', '" + customer.getPostalCode() + "', '" + customer.getPhone() + "', " +
-                           "NOW(), '" + getCurrentUser().getUserName() + "', " + "NOW(), '" + getCurrentUser().getUserName() +
+        String statement = "INSERT INTO customers VALUES (" + customer.getCustomerId() + ", '" +
+                           customer.getCustomerName() + "', '" + customer.getAddress() + "', '" +
+                           customer.getPostalCode() + "', '" + customer.getPhone() + "', " + "NOW(), '" +
+                           getCurrentUser().getUserName() + "', " + "NOW(), '" + getCurrentUser().getUserName() +
                            "', " + customer.getDivision().getDivisionID() + ");";
         getResults(connection, statement);
     }
