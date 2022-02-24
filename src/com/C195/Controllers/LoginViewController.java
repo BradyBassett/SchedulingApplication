@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryUsers.queryUser;
+import static com.C195.Database.QueryUsers.setCurrUser;
 
 
 public class LoginViewController extends ViewController implements Initializable {
@@ -41,7 +41,7 @@ public class LoginViewController extends ViewController implements Initializable
 
         try {
             openConnection();
-            queryUser(usernameField.getText(), passwordField.getText());
+            setCurrUser(usernameField.getText(), passwordField.getText());
             loginValidation();
         } catch (NullPointerException | SQLException exception) {
             showAlert(exception);
