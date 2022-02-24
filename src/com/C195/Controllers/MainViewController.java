@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
 import static com.C195.Database.QueryAppointments.queryAllAppointments;
-import static com.C195.Database.QueryAppointments.queryUserAppointments;
+import static com.C195.Database.QueryAppointments.queryAppointmentsByTime;
 import static com.C195.Database.QueryCustomers.queryCustomers;
 
 public class MainViewController extends ViewController implements Initializable {
@@ -127,7 +127,7 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
-            appointments = FXCollections.observableArrayList(queryUserAppointments(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
+            appointments = FXCollections.observableArrayList(queryAppointmentsByTime(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
                     byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected())) ;
         } catch (SQLException e) {
             showAlert(e);
