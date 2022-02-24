@@ -15,11 +15,10 @@ import static com.C195.Database.QueryContacts.queryContact;
 import static com.C195.Database.QueryCustomers.queryCustomer;
 
 public abstract class QueryAppointments extends Query {
-    public static ArrayList<Appointment> queryUserAppointments(Date date, boolean daySelected, boolean weekSelected, boolean monthSelected) throws SQLException {
+    public static ArrayList<Appointment> queryAppointmentsByTime(Date date, boolean daySelected, boolean weekSelected, boolean monthSelected) throws SQLException {
         ArrayList<Appointment> appointments = new ArrayList<>();
         String statement = "SELECT * " +
-                           "FROM appointments " +
-                           "WHERE User_ID=" + getCurrentUser().getUserId();
+                           "FROM appointments ";
         if (daySelected)
             statement += " AND (DAY(Start)=DAY('" + date + "') AND YEAR(Start)=YEAR('" + date + "'));";
         else if (weekSelected)
@@ -50,5 +49,15 @@ public abstract class QueryAppointments extends Query {
             appointments.add(appointment);
         }
         return appointments;
+    }
+
+    public static int queryMaxId() throws SQLException {
+        int nextId = 1;
+        String statement = "SELECT MAX(Appointment_ID) FROM appointments";
+        ResultSet results = getResults(connection, statement);
+        if (results.next()) {
+            nextId = results.getInt(1);
+        }
+        return nextId;
     }
 }
