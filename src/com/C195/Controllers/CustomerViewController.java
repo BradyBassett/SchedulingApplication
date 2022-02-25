@@ -1,5 +1,6 @@
 package com.C195.Controllers;
 
+import com.C195.Database.QueryCustomers;
 import com.C195.Models.Country;
 import com.C195.Models.Customer;
 import com.C195.Models.Division;
@@ -8,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -16,7 +16,6 @@ import javafx.util.StringConverter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
@@ -24,10 +23,8 @@ import static com.C195.Database.QueryCountries.queryCountries;
 import static com.C195.Database.QueryCustomers.*;
 import static com.C195.Database.QueryDivisions.queryDivisions;
 
-public class CustomerViewController extends ViewController implements Initializable {
+public class CustomerViewController extends FormController implements Initializable {
     public boolean newCustomer = true;
-    @FXML private Button cancelButton;
-    @FXML private Button saveButton;
     @FXML private TextField customerIdField;
     @FXML private TextField customerNameField;
     @FXML private TextField customerAddressField;
@@ -38,11 +35,10 @@ public class CustomerViewController extends ViewController implements Initializa
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cancelButton.setText(bundle.getString("button.cancel"));
-        saveButton.setText(bundle.getString("button.save"));
+        initButtons();
         try {
             openConnection();
-            customerIdField.setText(String.valueOf(queryMaxId() + 1));
+            customerIdField.setText(String.valueOf(QueryCustomers.queryMaxId() + 1));
         } catch (SQLException e) {
             showAlert(e);
         } finally {
@@ -128,28 +124,26 @@ public class CustomerViewController extends ViewController implements Initializa
     }
 
     @FXML private void handleSave(ActionEvent event) {
+        boolean success = false;
         try {
             validateItems();
             openConnection();
+            Customer customer = new Customer(Integer.parseInt(customerIdField.getText()), customerNameField.getText(),
+                    customerAddressField.getText(), customerPostalCodeField.getText(), customerPhoneField.getText(),
+                    customerDivisionBox.getValue());
             if (newCustomer){
-                createNewCustomer(new Customer(Integer.parseInt(customerIdField.getText()),
-                        customerNameField.getText(), customerAddressField.getText(), customerPostalCodeField.getText(),
-                        customerPhoneField.getText(), customerDivisionBox.getValue()));
+                createNewCustomer(customer);
             } else {
-                modifyCustomer(new Customer(Integer.parseInt(customerIdField.getText()),
-                        customerNameField.getText(), customerAddressField.getText(), customerPostalCodeField.getText(),
-                        customerPhoneField.getText(), customerDivisionBox.getValue()));
+                modifyCustomer(customer);
             }
-            showView(event, "../Views/mainView.fxml");
+            success = true;
         } catch (NullPointerException | IllegalArgumentException | SQLException exception) {
             showAlert(exception);
         } finally {
             closeConnection();
         }
-    }
-
-    @FXML private void handleCancel(ActionEvent e) {
-        showView(e, "../Views/mainView.fxml");
+        if (success)
+            showView(event, "../Views/mainView.fxml");
     }
 
     private void validateItems() {
@@ -166,15 +160,5 @@ public class CustomerViewController extends ViewController implements Initializa
             throw new NullPointerException(bundle.getString("error.nullCountryBox"));
         if (customerDivisionBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullDivisionBox"));
-    }
-
-    private void validateFieldNotEmpty(String field, String error) {
-        if (field.isEmpty())
-            throw new NullPointerException(error);
-    }
-
-    private void validateField(String regex, String field, String error) {
-        if (!Pattern.matches(regex, field))
-            throw new IllegalArgumentException(error);
     }
 }
