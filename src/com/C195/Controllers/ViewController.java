@@ -1,5 +1,6 @@
 package com.C195.Controllers;
 
+import com.C195.Models.Appointment;
 import com.C195.Models.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -46,6 +47,22 @@ public class ViewController extends BaseController {
             stage.setScene(scene);
             customerViewController.initCustomerData(customer);
             customerViewController.newCustomer = false;
+            stage.show();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    protected void showView(ActionEvent event, Appointment appointment) {
+        try {
+            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("../Views/appointmentView.fxml")));
+            Parent root = loader.load();
+            AppointmentViewController appointmentViewController = loader.getController();
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            appointmentViewController.initAppointmentData(appointment);
+            appointmentViewController.newAppointment = false;
             stage.show();
         } catch (IOException exception) {
             exception.printStackTrace();
