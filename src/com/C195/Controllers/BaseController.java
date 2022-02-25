@@ -2,8 +2,10 @@ package com.C195.Controllers;
 
 import com.C195.Models.User;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public abstract class BaseController {
@@ -25,7 +27,13 @@ public abstract class BaseController {
     }
 
     protected void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
         alert.showAndWait();
+    }
+
+    protected boolean confirmationAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message);
+        Optional<ButtonType> confirmation = alert.showAndWait();
+        return confirmation.isPresent() && confirmation.get() == ButtonType.OK;
     }
 }
