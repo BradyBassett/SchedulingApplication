@@ -58,9 +58,9 @@ public abstract class QueryCustomers extends Query {
     }
 
     public static void modifyCustomer(Customer customer) throws SQLException {
-        String statement = "UPDATE customers SET Customer_Name='" + customer.getCustomerName() +
-                           "', Address='" + customer.getAddress() + "', Postal_Code='" + customer.getPostalCode() +
-                           "', Phone='" + customer.getPhone() + "', Last_Update=NOW(), Last_Updated_By='" +
+        String statement = "UPDATE customers SET Customer_Name='" + customer.getCustomerName() + "', Address='" +
+                           customer.getAddress() + "', Postal_Code='" + customer.getPostalCode() + "', Phone='" +
+                           customer.getPhone() + "', Last_Update=NOW(), Last_Updated_By='" +
                            getCurrentUser().getUserName() + "', Division_ID=" + customer.getDivision().getDivisionID() +
                            " WHERE Customer_ID=" + customer.getCustomerId() + ";";
         getResults(connection, statement);
