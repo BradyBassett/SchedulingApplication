@@ -1,6 +1,5 @@
 package com.C195.Controllers;
 
-import com.C195.Database.QueryCustomers;
 import com.C195.Models.Appointment;
 import com.C195.Models.Customer;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -13,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,8 +19,8 @@ import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
-import static com.C195.Database.QueryAppointments.queryAllAppointments;
-import static com.C195.Database.QueryAppointments.queryAppointmentsByTime;
+import static com.C195.Database.QueryAppointments.*;
+import static com.C195.Database.QueryCustomers.deleteCustomer;
 import static com.C195.Database.QueryCustomers.queryCustomers;
 
 public class MainViewController extends ViewController implements Initializable {
@@ -60,7 +58,6 @@ public class MainViewController extends ViewController implements Initializable 
     @FXML private TableColumn<Customer, String> customerPostalCode;
     @FXML private TableColumn<Customer, String> customerPhone;
     @FXML private TableColumn<Customer, Integer> customerDivisionId;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -104,7 +101,6 @@ public class MainViewController extends ViewController implements Initializable 
         customerPostalCode.setText(bundle.getString("table.postalCode"));
         customerPhone.setText(bundle.getString("table.phone"));
         customerDivisionId.setText(bundle.getString("table.division"));
-
     }
 
     @FXML private void initAppointmentTable() {
@@ -122,13 +118,31 @@ public class MainViewController extends ViewController implements Initializable 
         appointmentContactId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getContact().getContactId()).asObject());
         appointmentUserId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getUser().getUserId()).asObject());
         appointmentTable.setItems(appointments);
+
+        appointmentTable.setRowFactory(tv -> {
+            TableRow<Appointment> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (tv.getSelectionModel().getSelectedItem() != null) {
+                    modifyAppointmentButton.setDisable(false);
+                    deleteAppointmentButton.setDisable(false);
+                } else {
+                    modifyAppointmentButton.setDisable(true);
+                    deleteAppointmentButton.setDisable(true);
+                }
+            });
+            return row;
+        });
     }
 
     private void setAppointments() {
         try {
             openConnection();
-            appointments = FXCollections.observableArrayList(queryAppointmentsByTime(Date.valueOf(selectedDay.getValue()), byDayRadioButton.isSelected(),
-                    byWeekRadioButton.isSelected(), byMonthRadioButton.isSelected())) ;
+            if (byDayRadioButton.isSelected())
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(selectedDay.getValue().toString()));
+            if (byWeekRadioButton.isSelected())
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnWeek(selectedDay.getValue().toString()));
+            if (byMonthRadioButton.isSelected())
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(selectedDay.getValue().toString()));
         } catch (SQLException e) {
             showAlert(e);
         } finally {
@@ -151,12 +165,24 @@ public class MainViewController extends ViewController implements Initializable 
         showView(e, "../Views/appointmentView.fxml");
     }
 
-    @FXML private void handleAppointmentModify() {
-
+    @FXML private void handleAppointmentModify(ActionEvent e) {
+        Appointment appointment = appointmentTable.getSelectionModel().getSelectedItem();
+        showView(e, appointment);
     }
 
     @FXML private void handleAppointmentDelete() {
-
+        if (confirmationAlert(bundle.getString("alert.confirmAppointmentDelete"))) {
+            try {
+                openConnection();
+                deleteAppointment(appointmentTable.getSelectionModel().getSelectedItem().getAppointmentId());
+                showAlert(bundle.getString("alert.appointmentDeleted"));
+            } catch (SQLException e) {
+                showAlert(e);
+            } finally {
+                closeConnection();
+            }
+            initAppointmentTable();
+        }
     }
 
     private void initCustomerTable() {
@@ -171,12 +197,16 @@ public class MainViewController extends ViewController implements Initializable 
         customerDivisionId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getDivision().getDivisionID()).asObject());
         customerTable.setItems(customers);
 
+        // tv means table view
         customerTable.setRowFactory(tv -> {
             TableRow<Customer> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (tv.getSelectionModel().getSelectedItem() != null) {
                     modifyCustomerButton.setDisable(false);
                     deleteCustomerButton.setDisable(false);
+                } else {
+                    modifyCustomerButton.setDisable(true);
+                    deleteCustomerButton.setDisable(true);
                 }
             });
             return row;
@@ -204,17 +234,19 @@ public class MainViewController extends ViewController implements Initializable 
     }
 
     @FXML private void handleCustomerDelete() {
-        try {
-            openConnection();
-            validateDelete();
-            QueryCustomers.deleteCustomer(customerTable.getSelectionModel().getSelectedItem().getCustomerId());
-            showAlert(bundle.getString("alert.customerDeleted"));
-        } catch (SQLException | IllegalAccessException e) {
-            showAlert(e);
-        } finally {
-            closeConnection();
+        if (confirmationAlert(bundle.getString("alert.confirmCustomerDelete"))) {
+            try {
+                openConnection();
+                validateDelete();
+                deleteCustomer(customerTable.getSelectionModel().getSelectedItem().getCustomerId());
+                showAlert(bundle.getString("alert.customerDeleted"));
+            } catch (SQLException | IllegalAccessException e) {
+                showAlert(e);
+            } finally {
+                closeConnection();
+            }
+            initCustomerTable();
         }
-        initCustomerTable();
     }
 
     private void validateDelete() throws IllegalAccessException, SQLException {
