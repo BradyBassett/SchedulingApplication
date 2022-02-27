@@ -14,8 +14,7 @@ public abstract class QueryUsers extends Query {
         String statement = "SELECT * FROM users WHERE User_Name='" + username + "' AND Password='" + password + "';";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
-            User user = new User(results.getInt("User_ID"), results.getString("User_Name"),
-                    results.getString("Password"));
+            User user = new User(results.getInt("User_ID"), results.getString("User_Name"));
             setCurrentUser(user);
         }
     }
@@ -25,8 +24,7 @@ public abstract class QueryUsers extends Query {
         String statement = "SELECT * FROM users";
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
-            User user = new User(results.getInt("User_ID"), results.getString("User_Name"),
-                    results.getString("Password"));
+            User user = new User(results.getInt("User_ID"), results.getString("User_Name"));
             users.add(user);
         }
         return users;
@@ -36,8 +34,7 @@ public abstract class QueryUsers extends Query {
         String statement = "SELECT * FROM users WHERE User_ID=" + userId + ";";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
-            return new User(userId, results.getString("User_Name"),
-                    results.getString("Password"));
+            return new User(userId, results.getString("User_Name"));
         }
         return null;
     }

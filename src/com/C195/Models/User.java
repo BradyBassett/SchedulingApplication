@@ -3,12 +3,10 @@ package com.C195.Models;
 public class User {
     private int userId;
     private String userName;
-    private String password;
 
-    public User(int userId, String userName, String password) {
+    public User(int userId, String userName) {
         this.userId = userId;
         this.userName = userName;
-        this.password = password;
     }
 
     public int getUserId() {
@@ -17,14 +15,6 @@ public class User {
 
     public String getUserName() {
         return userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setUserId(int userId) {
