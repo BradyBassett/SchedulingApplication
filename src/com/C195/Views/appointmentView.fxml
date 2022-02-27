@@ -57,24 +57,18 @@
                   <String fx:value="rounded" />
                </styleClass>
             </TextField>
-            <TextField fx:id="appointmentCustomerIdField" layoutX="155.0" layoutY="391.0" prefHeight="35.0" prefWidth="240.0" AnchorPane.topAnchor="295.0">
-               <font>
-                  <Font size="16.0" />
-               </font>
+            <ComboBox fx:id="appointmentCustomerBox" layoutX="155.0" layoutY="295.0" prefHeight="35.0" prefWidth="240.0">
                <styleClass>
                   <String fx:value="dataEntry" />
                   <String fx:value="rounded" />
                </styleClass>
-            </TextField>
-            <TextField fx:id="appointmentUserIdField" layoutX="155.0" layoutY="426.0" prefHeight="35.0" prefWidth="240.0" AnchorPane.topAnchor="345.0">
-               <font>
-                  <Font size="16.0" />
-               </font>
+            </ComboBox>
+            <ComboBox fx:id="appointmentUserBox" layoutX="155.0" layoutY="345.0" prefHeight="35.0" prefWidth="240.0">
                <styleClass>
                   <String fx:value="dataEntry" />
                   <String fx:value="rounded" />
                </styleClass>
-            </TextField>
+            </ComboBox>
             <ComboBox fx:id="appointmentContactBox" layoutX="155.0" layoutY="461.0" prefHeight="35.0" prefWidth="240.0" AnchorPane.topAnchor="395.0">
                <styleClass>
                   <String fx:value="dataEntry" />
