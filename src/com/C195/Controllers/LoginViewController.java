@@ -2,7 +2,9 @@ package com.C195.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -15,6 +17,7 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
@@ -53,7 +56,14 @@ public class LoginViewController extends ViewController implements Initializable
 
         logLoginAttempt(successfulLogin, errorMessage);
         if (successfulLogin) {
-            showView(event, "../Views/mainView.fxml");
+            try {
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("../Views/mainView.fxml")));
+                Parent root = loader.load();
+                MainViewController mvc = loader.getController();
+                showView(event, root, mvc);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
