@@ -17,6 +17,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
@@ -249,7 +251,7 @@ public class MainViewController extends ViewController implements Initializable 
         if (confirmationAlert(bundle.getString("alert.confirmCustomerDelete"))) {
             try {
                 openConnection();
-                validateDelete();
+                validateCustomerDelete();
                 deleteCustomer(customerTable.getSelectionModel().getSelectedItem().getCustomerId());
                 showAlert(bundle.getString("alert.customerDeleted"));
             } catch (SQLException | IllegalAccessException e) {
@@ -261,12 +263,35 @@ public class MainViewController extends ViewController implements Initializable 
         }
     }
 
-    private void validateDelete() throws IllegalAccessException, SQLException {
+    private void validateCustomerDelete() throws IllegalAccessException, SQLException {
         ArrayList<Appointment> allAppointments = queryAllAppointments();
         for (Appointment appointment : allAppointments) {
             if (appointment.getCustomer().getCustomerId() == customerTable.getSelectionModel().getSelectedItem().getCustomerId()) {
                 throw new IllegalAccessException(bundle.getString("error.customerDependencyPresent"));
             }
+        }
+    }
+
+    public void appointmentAlert() {
+        Appointment appointment = null;
+        try {
+            openConnection();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            Timestamp now = new Timestamp(calendar.getTimeInMillis());
+            calendar.add(Calendar.MINUTE, 15);
+            Timestamp next15 = new Timestamp(calendar.getTimeInMillis());
+            appointment = queryNextAppointment(convertLocalToUTC(now), convertLocalToUTC(next15));
+        } catch (SQLException e) {
+            showAlert(e);
+        } finally {
+            closeConnection();
+        }
+        if (appointment != null) {
+            showAlert(bundle.getString("alert.appointmentUpcoming").replace("_", "Appointment ID: "
+                    + appointment.getAppointmentId() + " starts at: " + convertUTCToLocal(appointment.getStart())));
+        } else {
+            showAlert(bundle.getString("alert.noUpcomingAppointments"));
         }
     }
 }
