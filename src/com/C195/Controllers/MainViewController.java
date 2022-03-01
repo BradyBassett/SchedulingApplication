@@ -80,6 +80,7 @@ public class MainViewController extends ViewController implements Initializable 
         byMonthRadioButton.setText(bundle.getString("button.month"));
         byWeekRadioButton.setText(bundle.getString("button.week"));
         byDayRadioButton.setText(bundle.getString("button.day"));
+        // todo set to last set values also
         selectedDay.setValue(LocalDate.now());
 
         appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.day")));
@@ -137,6 +138,8 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
+
+            // todo maybe need to fix selected day based on edge timezone cases
             if (byDayRadioButton.isSelected())
                 appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(selectedDay.getValue().toString()));
             if (byWeekRadioButton.isSelected())
@@ -148,6 +151,11 @@ public class MainViewController extends ViewController implements Initializable 
         } finally {
             closeConnection();
         }
+
+        appointments.forEach(appointment -> {
+            appointment.setStart(convertUTCToLocal(appointment.getStart()));
+            appointment.setEnd(convertUTCToLocal(appointment.getEnd()));
+        });
     }
 
     @FXML private void handleScheduleView() {
@@ -175,7 +183,9 @@ public class MainViewController extends ViewController implements Initializable 
             try {
                 openConnection();
                 deleteAppointment(appointmentTable.getSelectionModel().getSelectedItem().getAppointmentId());
-                showAlert(bundle.getString("alert.appointmentDeleted"));
+                showAlert(bundle.getString("alert.appointmentDeleted").replace("_", "ID: " +
+                        appointmentTable.getSelectionModel().getSelectedItem().getAppointmentId() + " - Type: " +
+                        appointmentTable.getSelectionModel().getSelectedItem().getType()));
             } catch (SQLException e) {
                 showAlert(e);
             } finally {
