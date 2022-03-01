@@ -13,7 +13,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -139,13 +141,13 @@ public class MainViewController extends ViewController implements Initializable 
         try {
             openConnection();
 
-            // todo maybe need to fix selected day based on edge timezone cases
+            String timestamp = convertLocalToUTC(Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now()))).toString();
             if (byDayRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(selectedDay.getValue().toString()));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(timestamp));
             if (byWeekRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnWeek(selectedDay.getValue().toString()));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnWeek(timestamp));
             if (byMonthRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(selectedDay.getValue().toString()));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(timestamp));
         } catch (SQLException e) {
             showAlert(e);
         } finally {
