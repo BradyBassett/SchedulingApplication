@@ -7,6 +7,7 @@ import com.C195.Models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import static com.C195.Controllers.BaseController.getCurrentUser;
@@ -66,22 +67,22 @@ public abstract class QueryAppointments extends Query {
         return nextId;
     }
 
-    public static void createNewAppointment(Appointment appointment) throws SQLException {
+    public static void createNewAppointment(Appointment appointment, Timestamp now) throws SQLException {
         String statement = "INSERT INTO client_schedule.appointments VALUES(" + appointment.getAppointmentId() + ", '" +
                            appointment.getTitle() + "', '" + appointment.getDescription() + "', '" +
                            appointment.getLocation() + "', '" + appointment.getType() + "', '" +
-                           appointment.getStart() + "', '" + appointment.getEnd() + "', NOW(), '" +
-                           getCurrentUser().getUserName() + "', NOW(), '" + getCurrentUser().getUserName() + "', " +
-                           appointment.getCustomer().getCustomerId() + ", " + appointment.getUser().getUserId() + ", " +
-                           appointment.getContact().getContactId() + ");";
+                           appointment.getStart() + "', '" + appointment.getEnd() + "', '" + now + "', '" +
+                           getCurrentUser().getUserName() + "', '" + now + "', '" +
+                           getCurrentUser().getUserName() + "', " + appointment.getCustomer().getCustomerId() + ", " +
+                           appointment.getUser().getUserId() + ", " + appointment.getContact().getContactId() + ");";
         getResults(connection, statement);
     }
 
-    public static void modifyAppointment(Appointment appointment) throws SQLException {
+    public static void modifyAppointment(Appointment appointment, Timestamp now) throws SQLException {
         String statement = "UPDATE appointments SET Title='" + appointment.getTitle() + "', Description='" +
                            appointment.getDescription() + "', Location='" + appointment.getLocation() + "', Type='" +
                            appointment.getType() + "', Start='" + appointment.getStart() + "', End='" +
-                           appointment.getEnd() + "', Last_Update=NOW(), Last_Updated_By='" +
+                           appointment.getEnd() + "', Last_Update='" + now + "', Last_Updated_By='" +
                            getCurrentUser().getUserName() + "', Customer_ID=" +
                            appointment.getCustomer().getCustomerId() + ", User_ID=" +
                            appointment.getUser().getUserId() + ", Contact_ID=" +

@@ -15,6 +15,8 @@ import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
@@ -132,9 +134,9 @@ public class CustomerViewController extends FormController implements Initializa
                     customerAddressField.getText(), customerPostalCodeField.getText(), customerPhoneField.getText(),
                     customerDivisionBox.getValue());
             if (newCustomer){
-                createNewCustomer(customer);
+                createNewCustomer(customer, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             } else {
-                modifyCustomer(customer);
+                modifyCustomer(customer, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             }
             success = true;
         } catch (NullPointerException | IllegalArgumentException | SQLException exception) {

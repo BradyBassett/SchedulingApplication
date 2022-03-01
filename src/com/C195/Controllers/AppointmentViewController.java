@@ -150,9 +150,9 @@ public class AppointmentViewController extends FormController implements Initial
                     appointmentLocationField.getText(), appointmentTypeField.getText(), start, end, customer, user,
                     contact);
             if (newAppointment){
-                createNewAppointment(appointment);
+                createNewAppointment(appointment, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             } else {
-                modifyAppointment(appointment);
+                modifyAppointment(appointment, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             }
             success = true;
         } catch (NullPointerException | IllegalArgumentException | SQLException exception) {

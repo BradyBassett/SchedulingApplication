@@ -5,6 +5,7 @@ import com.C195.Models.Division;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import static com.C195.Controllers.BaseController.getCurrentUser;
@@ -48,19 +49,19 @@ public abstract class QueryCustomers extends Query {
         return nextId;
     }
 
-    public static void createNewCustomer(Customer customer) throws SQLException {
+    public static void createNewCustomer(Customer customer, Timestamp now) throws SQLException {
         String statement = "INSERT INTO customers VALUES (" + customer.getCustomerId() + ", '" +
                            customer.getCustomerName() + "', '" + customer.getAddress() + "', '" +
-                           customer.getPostalCode() + "', '" + customer.getPhone() + "', " + "NOW(), '" +
-                           getCurrentUser().getUserName() + "', " + "NOW(), '" + getCurrentUser().getUserName() +
-                           "', " + customer.getDivision().getDivisionID() + ");";
+                           customer.getPostalCode() + "', '" + customer.getPhone() + "', '" + now + "', '" +
+                           getCurrentUser().getUserName() + "', '" + now + "', '" +
+                           getCurrentUser().getUserName() + "', " + customer.getDivision().getDivisionID() + ");";
         getResults(connection, statement);
     }
 
-    public static void modifyCustomer(Customer customer) throws SQLException {
+    public static void modifyCustomer(Customer customer, Timestamp now) throws SQLException {
         String statement = "UPDATE customers SET Customer_Name='" + customer.getCustomerName() + "', Address='" +
                            customer.getAddress() + "', Postal_Code='" + customer.getPostalCode() + "', Phone='" +
-                           customer.getPhone() + "', Last_Update=NOW(), Last_Updated_By='" +
+                           customer.getPhone() + "', Last_Update='" + now + "', Last_Updated_By='" +
                            getCurrentUser().getUserName() + "', Division_ID=" + customer.getDivision().getDivisionID() +
                            " WHERE Customer_ID=" + customer.getCustomerId() + ";";
         getResults(connection, statement);
