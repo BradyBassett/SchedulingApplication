@@ -57,6 +57,22 @@ public abstract class QueryAppointments extends Query {
         return appointments;
     }
 
+    public static Appointment queryNextAppointment(Timestamp now, Timestamp next15) throws SQLException {
+        String statement = "SELECT * FROM appointments WHERE Start BETWEEN '" + now + "' AND '" + next15 + "';";
+        ResultSet results = getResults(connection, statement);
+        if (results.next()) {
+            Customer customer = queryCustomer(results.getInt("Customer_ID"));
+            Contact contact = queryContact(results.getInt("Contact_ID"));
+            User user = queryUser(results.getInt("User_ID"));
+            return new Appointment(results.getInt("Appointment_ID"),
+                    results.getString("Title"), results.getString("Description"),
+                    results.getString("Location"), results.getString("Type"),
+                    results.getTimestamp("Start"), results.getTimestamp("End"),
+                    customer, user, contact);
+        }
+        return null;
+    }
+
     public static int queryMaxId() throws SQLException {
         int nextId = 1;
         String statement = "SELECT MAX(Appointment_ID) FROM appointments";
