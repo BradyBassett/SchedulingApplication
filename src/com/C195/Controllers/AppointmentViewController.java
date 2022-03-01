@@ -140,8 +140,8 @@ public class AppointmentViewController extends FormController implements Initial
         try {
             openConnection();
             validateItems();
-            Timestamp start = Timestamp.valueOf(appointmentStartField.getText());
-            Timestamp end = Timestamp.valueOf(appointmentEndField.getText());
+            Timestamp start = convertLocalToUTC(Timestamp.valueOf(appointmentStartField.getText()));
+            Timestamp end = convertLocalToUTC(Timestamp.valueOf(appointmentEndField.getText()));
             Customer customer = queryCustomer(appointmentCustomerBox.getValue().getCustomerId());
             User user = queryUser(appointmentUserBox.getValue().getUserId());
             Contact contact = appointmentContactBox.getValue();
@@ -166,15 +166,15 @@ public class AppointmentViewController extends FormController implements Initial
     }
 
     private void validateItems() throws SQLException {
+        // checks if all input fields are not empty
         validateFieldNotEmpty(appointmentTitleField.getText(), bundle.getString("error.nullTitleField"));
         validateFieldNotEmpty(appointmentDescriptionField.getText(), bundle.getString("error.nullDescriptionField"));
         validateFieldNotEmpty(appointmentLocationField.getText(), bundle.getString("error.nullLocationField"));
         validateFieldNotEmpty(appointmentTypeField.getText(), bundle.getString("error.nullTypeField"));
         validateFieldNotEmpty(appointmentStartField.getText(), bundle.getString("error.nullStartField"));
-        validateDates(appointmentStartField.getText());
         validateFieldNotEmpty(appointmentEndField.getText(), bundle.getString("error.nullEndField"));
-        validateDates(appointmentEndField.getText());
 
+        // checks if combo box values are empty
         if (appointmentCustomerBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullCustomerBox"));
         if (appointmentUserBox.getValue() == null)
@@ -182,22 +182,31 @@ public class AppointmentViewController extends FormController implements Initial
         if (appointmentContactBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullContactBox"));
 
-        Timestamp fieldStart = Timestamp.valueOf(appointmentStartField.getText());
-        Timestamp fieldEnd = Timestamp.valueOf(appointmentEndField.getText());
+        // checks if times inputted in start and end fields are valid TimeStamp objects
+        validateDates(appointmentStartField.getText());
+        validateDates(appointmentEndField.getText());
+
+        Timestamp fieldStartEST = convertLocalToEST(Timestamp.valueOf(appointmentStartField.getText()));
+        Timestamp fieldEndEST = convertLocalToEST(Timestamp.valueOf(appointmentEndField.getText()));
+
         // checks if start time equals end time or is after end time
-        if (fieldStart.after(fieldEnd) || fieldStart.equals(fieldEnd)) {
+        if (fieldStartEST.after(fieldEndEST) || fieldStartEST.equals(fieldEndEST)) {
             throw new IllegalArgumentException(bundle.getString("error.invalidHoursSequence"));
         }
+
         // checks if appointment extends passed accepted hours (ex 2022-02-25 12:00:00 - 2022-02-26 13:00:00)
-        if (fieldStart.toLocalDateTime().getYear() != fieldEnd.toLocalDateTime().getYear() ||
-            fieldStart.toLocalDateTime().getDayOfYear() != fieldEnd.toLocalDateTime().getDayOfYear()) {
+        if (fieldStartEST.toLocalDateTime().getYear() != fieldEndEST.toLocalDateTime().getYear() ||
+                fieldStartEST.toLocalDateTime().getDayOfYear() != fieldEndEST.toLocalDateTime().getDayOfYear()) {
             throw new IllegalArgumentException(bundle.getString("error.invalidHours"));
         }
+
         // checks if new apt start or end times conflict with existing appointments
-        for (Appointment apt : queryAppointmentsOnDay(appointmentStartField.getText())) {
+        for (Appointment apt : queryAppointmentsOnDay(convertLocalToUTC(Timestamp.valueOf(appointmentStartField.getText())).toString())) {
             if (apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())){
-                Timestamp aptStart = apt.getStart();
-                Timestamp aptEnd = apt.getEnd();
+                Timestamp aptStart = convertUTCToLocal(apt.getStart());
+                Timestamp aptEnd = convertUTCToLocal(apt.getEnd());
+                Timestamp fieldStart = Timestamp.valueOf(appointmentStartField.getText());
+                Timestamp fieldEnd = Timestamp.valueOf(appointmentEndField.getText());
                 if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
                         (fieldStart.after(aptStart) && aptStart.before(aptEnd)) ||
                         (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd))) {
@@ -210,7 +219,7 @@ public class AppointmentViewController extends FormController implements Initial
     private void validateDates(String field) throws SQLException {
         if (!validTimestamp(field))
             throw new IllegalArgumentException(bundle.getString("error.invalidTimestamp"));
-        LocalDateTime fieldLDT = Timestamp.valueOf(field).toLocalDateTime();
+        LocalDateTime fieldLDT = convertLocalToEST(Timestamp.valueOf(field)).toLocalDateTime();
         if (fieldLDT.getHour() >= 22 || fieldLDT.getHour() < 8)
             throw new IllegalArgumentException(bundle.getString("error.invalidHours"));
     }
