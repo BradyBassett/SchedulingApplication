@@ -25,6 +25,14 @@ public class ViewController extends BaseController {
         }
     }
 
+    protected void showView(ActionEvent event, Parent root, MainViewController mvc) {
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        mvc.appointmentAlert();
+        stage.show();
+    }
+
     protected void showView(ActionEvent event, String view) {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(view)));
