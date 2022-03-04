@@ -59,17 +59,18 @@ public class CustomerAppointmentsReportViewController extends ReportController {
     }
 
     @FXML private void getReport() {
+        int aptCount;
         try {
             validateBoxes();
             openConnection();
-            int count = queryNumberOfCustomerAppointments(typesBox.getValue(), monthsBox.getValue());
+            aptCount = queryNumberOfCustomerAppointments(typesBox.getValue(), monthsBox.getValue());
         } catch (NullPointerException | SQLException e) {
             showAlert(e);
             return;
         } finally {
             closeConnection();
         }
-        this.count.setText(String.valueOf(count));
+        count.setText(String.valueOf(aptCount));
         type.setText(typesBox.getValue());
         month.setText(monthsBox.getValue().toString());
     }
