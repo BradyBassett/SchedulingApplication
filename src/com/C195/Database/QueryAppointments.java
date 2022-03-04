@@ -1,13 +1,11 @@
 package com.C195.Database;
 
-import com.C195.Models.Appointment;
-import com.C195.Models.Contact;
-import com.C195.Models.Customer;
-import com.C195.Models.User;
+import com.C195.Models.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Month;
 import java.util.ArrayList;
 
 import static com.C195.Controllers.BaseController.getCurrentUser;
@@ -58,7 +56,8 @@ public abstract class QueryAppointments extends Query {
     }
 
     public static Appointment queryNextAppointment(Timestamp now, Timestamp next15) throws SQLException {
-        String statement = "SELECT * FROM appointments WHERE Start BETWEEN '" + now + "' AND '" + next15 + "';";
+        String statement = "SELECT * FROM appointments WHERE User_ID=" + getCurrentUser().getUserId()
+                           + " AND Start BETWEEN '" + now + "' AND '" + next15 + "';";
         ResultSet results = getResults(connection, statement);
         if (results.next()) {
             Customer customer = queryCustomer(results.getInt("Customer_ID"));
@@ -73,10 +72,20 @@ public abstract class QueryAppointments extends Query {
         return null;
     }
 
+    public static int queryNumberOfCustomerAppointments(String type, Month month) throws SQLException {
+        String statement = "SELECT COUNT(*) FROM appointments WHERE MONTH(Start)=" + month.getValue() + " AND Type='" +
+                           type + "';";
+        ResultSet results = getResults(connection, statement);
+        if (results.next())
+            return results.getInt(1);
+        return 0;
+    }
+
     public static int queryMaxId() throws SQLException {
         int nextId = 1;
         String statement = "SELECT MAX(Appointment_ID) FROM appointments";
         ResultSet results = getResults(connection, statement);
+
         if (results.next()) {
             nextId = results.getInt(1);
         }
