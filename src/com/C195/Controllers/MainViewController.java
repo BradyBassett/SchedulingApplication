@@ -32,14 +32,19 @@ public class MainViewController extends ViewController implements Initializable 
     private ObservableList<Customer> customers = FXCollections.observableArrayList();
     @FXML private Label appointmentsLabel;
     @FXML private Label customersLabel;
+    @FXML private Label reportsLabel;
     @FXML private Tab appointmentsTab;
     @FXML private Tab customersTab;
+    @FXML private Tab reportsTab;
     @FXML private Button addAppointmentButton;
     @FXML private Button modifyAppointmentButton;
     @FXML private Button deleteAppointmentButton;
     @FXML private Button addCustomerButton;
     @FXML private Button modifyCustomerButton;
     @FXML private Button deleteCustomerButton;
+    @FXML private Button customerAppointmentsButton;
+    @FXML private Button contactsScheduleButton;
+    @FXML private Button usersScheduleButton;
     @FXML private RadioButton byDayRadioButton;
     @FXML private RadioButton byWeekRadioButton;
     @FXML private RadioButton byMonthRadioButton;
@@ -73,14 +78,20 @@ public class MainViewController extends ViewController implements Initializable 
     private void initText() {
         appointmentsTab.setText(bundle.getString("tab.appointments"));
         customersTab.setText(bundle.getString("tab.customers"));
+        reportsTab.setText(bundle.getString("tab.reports"));
         appointmentsLabel.setText(bundle.getString("tab.appointments"));
         customersLabel.setText(bundle.getString("tab.customers"));
+        reportsLabel.setText(bundle.getString("tab.reports"));
+
         addAppointmentButton.setText(bundle.getString("button.add"));
         modifyAppointmentButton.setText(bundle.getString("button.modify"));
         deleteAppointmentButton.setText(bundle.getString("button.delete"));
         addCustomerButton.setText(bundle.getString("button.add"));
         modifyCustomerButton.setText(bundle.getString("button.modify"));
         deleteCustomerButton.setText(bundle.getString("button.delete"));
+        customerAppointmentsButton.setText(bundle.getString("button.customerAppointments"));
+        contactsScheduleButton.setText(bundle.getString("button.contactsSchedule"));
+        usersScheduleButton.setText(bundle.getString("button.usersSchedule"));
         byMonthRadioButton.setText(bundle.getString("button.month"));
         byWeekRadioButton.setText(bundle.getString("button.week"));
         byDayRadioButton.setText(bundle.getString("button.day"));
@@ -142,7 +153,6 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
-
             String timestamp = convertLocalToUTC(Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now()))).toString();
             if (byDayRadioButton.isSelected())
                 appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(timestamp));
@@ -293,5 +303,17 @@ public class MainViewController extends ViewController implements Initializable 
         } else {
             showAlert(bundle.getString("alert.noUpcomingAppointments"));
         }
+    }
+
+    @FXML private void handleCustomerAppointmentsReport(ActionEvent e) {
+        showView(e, "../Views/customerAppointmentsReportView.fxml");
+    }
+
+    @FXML private void handleContactScheduleReport(ActionEvent e) {
+        showView(e, "../Views/contactsScheduleReportView.fxml");
+    }
+
+    @FXML private void handleUsersScheduleReport(ActionEvent e) {
+        showView(e, "../Views/usersScheduleReportView.fxml");
     }
 }

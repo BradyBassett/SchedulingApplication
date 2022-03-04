@@ -21,7 +21,7 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <DatePicker fx:id="selectedDay" layoutX="536.0" layoutY="11.0" onAction="#initAppointmentTable" prefHeight="25.0" prefWidth="210.0" />
-                  <Button fx:id="addAppointmentButton" layoutX="14.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentAdd" textFill="WHITE">
+                  <Button fx:id="addAppointmentButton" layoutX="14.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentAdd" prefWidth="150.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -33,7 +33,7 @@
                         <String fx:value="rounded" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="modifyAppointmentButton" disable="true" layoutX="627.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentModify" textFill="WHITE">
+                  <Button fx:id="modifyAppointmentButton" alignment="CENTER" disable="true" layoutX="566.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentModify" prefWidth="150.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -45,7 +45,7 @@
                         <String fx:value="rounded" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="deleteAppointmentButton" disable="true" layoutX="1238.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentDelete" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="14.0">
+                  <Button fx:id="deleteAppointmentButton" disable="true" layoutX="1238.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleAppointmentDelete" prefWidth="150.0" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="14.0">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -81,7 +81,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <Label fx:id="appointmentsLabel" alignment="CENTER" layoutX="558.0" layoutY="73.0" prefHeight="17.0" prefWidth="165.0" textAlignment="JUSTIFY">
+                  <Label fx:id="appointmentsLabel" alignment="CENTER" layoutX="558.0" layoutY="66.0" prefHeight="17.0" prefWidth="165.0" textAlignment="JUSTIFY">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -93,7 +93,7 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="addCustomerButton" layoutX="14.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerAdd" textFill="WHITE">
+                  <Button fx:id="addCustomerButton" layoutX="14.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerAdd" prefWidth="150.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -105,7 +105,7 @@
                         <String fx:value="rounded" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="modifyCustomerButton" disable="true" layoutX="627.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerModify" textFill="WHITE">
+                  <Button fx:id="modifyCustomerButton" alignment="CENTER" disable="true" layoutX="566.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerModify" prefWidth="150.0" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -117,7 +117,7 @@
                         <String fx:value="rounded" />
                      </styleClass>
                   </Button>
-                  <Button fx:id="deleteCustomerButton" disable="true" layoutX="1238.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerDelete" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="14.0">
+                  <Button fx:id="deleteCustomerButton" disable="true" layoutX="1238.0" layoutY="634.0" mnemonicParsing="false" onAction="#handleCustomerDelete" prefWidth="150.0" textAlignment="CENTER" textFill="WHITE" AnchorPane.rightAnchor="14.0">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -147,6 +147,55 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+      <Tab id="appointmentsTab" fx:id="reportsTab" closable="false">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="reportsLabel" alignment="CENTER" layoutX="558.0" layoutY="52.0" prefHeight="17.0" prefWidth="165.0" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="System Bold" size="40.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="customerAppointmentsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="391.0" layoutY="268.0" mnemonicParsing="false" onAction="#handleCustomerAppointmentsReport" prefHeight="60.0" prefWidth="500.0" textFill="WHITE">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="primary-btn" />
+                        <String fx:value="rounded" />
+                     </styleClass>
+                  </Button>
+                  <Button fx:id="contactsScheduleButton" alignment="CENTER" contentDisplay="CENTER" layoutX="391.0" layoutY="343.0" mnemonicParsing="false" onAction="#handleContactScheduleReport" prefHeight="60.0" prefWidth="500.0" textFill="WHITE">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="primary-btn" />
+                        <String fx:value="rounded" />
+                     </styleClass>
+                  </Button>
+                  <Button fx:id="usersScheduleButton" alignment="CENTER" contentDisplay="CENTER" layoutX="391.0" layoutY="418.0" mnemonicParsing="false" onAction="#handleUsersScheduleReport" prefHeight="60.0" prefWidth="500.0" textFill="WHITE">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <styleClass>
+                        <String fx:value="primary-btn" />
+                        <String fx:value="rounded" />
+                     </styleClass>
+                  </Button>
                </children>
             </AnchorPane>
          </content>
