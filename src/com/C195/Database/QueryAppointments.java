@@ -38,6 +38,16 @@ public abstract class QueryAppointments extends Query {
         return accessResults(statement);
     }
 
+    public static ArrayList<Appointment> queryAppointmentsByCustomer(int contactId) throws SQLException {
+        String statement = "SELECT * FROM appointments WHERE Contact_ID=" + contactId + ";";
+        return accessResults(statement);
+    }
+
+    public static ArrayList<Appointment> queryAppointmentsByUser(int userId) throws SQLException {
+        String statement = "SELECT * FROM appointments WHERE User_ID=" + userId + ";";
+        return accessResults(statement);
+    }
+
     private static ArrayList<Appointment> accessResults(String statement) throws SQLException {
         ArrayList<Appointment> appointments = new ArrayList<>();
         ResultSet results = getResults(connection, statement);
@@ -90,6 +100,16 @@ public abstract class QueryAppointments extends Query {
             nextId = results.getInt(1);
         }
         return nextId;
+    }
+
+    public static ArrayList<String> queryAppointmentTypes() throws SQLException {
+        ArrayList<String> types = new ArrayList<>();
+        String statement = "SELECT Type FROM appointments";
+        ResultSet results = getResults(connection, statement);
+        while (results.next()) {
+            types.add(results.getString(1));
+        }
+        return types;
     }
 
     public static void createNewAppointment(Appointment appointment, Timestamp now) throws SQLException {
