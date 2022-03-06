@@ -17,11 +17,11 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static com.C195.Database.JDBC.closeConnection;
-import static com.C195.Database.JDBC.openConnection;
+import static com.C195.Database.JDBC.*;
 import static com.C195.Database.QueryUsers.setCurrUser;
 
 
@@ -35,7 +35,7 @@ public class LoginViewController extends ViewController implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle) {
         usernameField.setPromptText(bundle.getString("field.username"));
         loginBtn.setText(bundle.getString("button.login"));
-        zoneLabel.setText(String.valueOf(locale));
+        zoneLabel.setText(String.valueOf(Locale.getDefault()));
     }
 
     @FXML private void onLogin(ActionEvent event) {
