@@ -25,6 +25,10 @@ import static com.C195.Database.QueryCountries.queryCountries;
 import static com.C195.Database.QueryCustomers.*;
 import static com.C195.Database.QueryDivisions.queryDivisions;
 
+/**
+ * This class is responsible for controlling all form functionality for the customerView scene.
+ * @author Brady Bassett
+ */
 public class CustomerViewController extends FormController implements Initializable {
     public boolean newCustomer = true;
     @FXML private TextField customerIdField;
@@ -35,6 +39,11 @@ public class CustomerViewController extends FormController implements Initializa
     @FXML private ComboBox<Country> customerCountryBox;
     @FXML private ComboBox<Division> customerDivisionBox;
 
+    /**
+     * Initializes all text and prompt texts values, as well as the items for each ComboBox.
+     * @param url The url to the customerView.fxml file.
+     * @param resourceBundle This parameter contains all locale-specific objects.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initButtons();
@@ -55,6 +64,9 @@ public class CustomerViewController extends FormController implements Initializa
         initCountries();
     }
 
+    /**
+     * This function is called to initialize the countries ComboBox.
+     */
     private void initCountries() {
         ObservableList<Country> countries;
         try {
@@ -67,6 +79,7 @@ public class CustomerViewController extends FormController implements Initializa
             closeConnection();
         }
 
+        // Displays the country name value instead of the memory address
         customerCountryBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Country country) {
@@ -82,6 +95,10 @@ public class CustomerViewController extends FormController implements Initializa
         customerCountryBox.setItems(countries);
     }
 
+    /**
+     * This function will initialize the divisions ComboBox with all divisions associated with a given countryId.
+     * @param countryId The country that contains all relevant divisions.
+     */
     private void initDivisions(int countryId) {
         ObservableList<Division> divisions;
         try {
@@ -94,6 +111,7 @@ public class CustomerViewController extends FormController implements Initializa
             closeConnection();
         }
 
+        // Displays the division name value instead of the memory address
         customerDivisionBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Division division) {
@@ -109,6 +127,11 @@ public class CustomerViewController extends FormController implements Initializa
         customerDivisionBox.setItems(divisions);
     }
 
+    /**
+     * This function is called whenever the modify button is selected on the mainView, and passes the selected
+     * customer information into all fields.
+     * @param customer The customer that is being loaded.
+     */
     public void initCustomerData(Customer customer) {
         customerIdField.setText(String.valueOf(customer.getCustomerId()));
         customerNameField.setText(customer.getCustomerName());
@@ -120,13 +143,20 @@ public class CustomerViewController extends FormController implements Initializa
         customerDivisionBox.setDisable(false);
     }
 
+    /**
+     * Whenever a country value is selected, query all divisions related to it and enable the user to select the
+     * customerDivisionBox.
+     */
     @FXML private void handleCountrySelected() {
         initDivisions(customerCountryBox.getValue().getCountryId());
         customerDivisionBox.setDisable(false);
     }
 
+    /**
+     * This function saves the customer data and either creates or modifies an appointment in the database.
+     * @param event The ActionEvent to pass down the current window to the main view.
+     */
     @FXML private void handleSave(ActionEvent event) {
-        boolean success = false;
         try {
             validateItems();
             openConnection();
@@ -138,23 +168,28 @@ public class CustomerViewController extends FormController implements Initializa
             } else {
                 modifyCustomer(customer, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             }
-            success = true;
         } catch (NullPointerException | IllegalArgumentException | SQLException exception) {
             showAlert(exception);
+            return;
         } finally {
             closeConnection();
         }
-        if (success)
-            showView(event, "../Views/mainView.fxml");
+        showView(event, "../Views/mainView.fxml");
     }
 
+    /**
+     * This function is responsible for validating that every user inputted field is a valid input.
+     */
     private void validateItems() {
         validateFieldNotEmpty(customerNameField.getText(), bundle.getString("error.nullNameField"));
         validateFieldNotEmpty(customerAddressField.getText(), bundle.getString("error.nullAddressField"));
+        // REGEX - digits followed by a space followed by words and spaces
         validateField("\\d+\\s[\\w\\s]+", customerAddressField.getText(), bundle.getString("error.invalidAddress"));
         validateFieldNotEmpty(customerPostalCodeField.getText(), bundle.getString("error.nullPostalCodeField"));
+        // REGEX - 5 character sequence of characters or digits
         validateField("[a-zA-Z\\d]{5}", customerPostalCodeField.getText(), bundle.getString("error.invalidPostal"));
         validateFieldNotEmpty(customerPhoneField.getText(), bundle.getString("error.nullPhoneField"));
+        // REGEX - Various different methods of displaying a phone number (including international numbers)
         validateField("^(\\+?\\d{1,3}-?( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$",
                 customerPhoneField.getText(), bundle.getString("error.invalidPhone"));
 

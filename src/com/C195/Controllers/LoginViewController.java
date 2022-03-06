@@ -24,13 +24,22 @@ import java.util.ResourceBundle;
 import static com.C195.Database.JDBC.*;
 import static com.C195.Database.QueryUsers.setCurrUser;
 
-
+/**
+ * This class is responsible for controlling all functionality for the login view. Every LoginViewController is a
+ * ViewController.
+ * @author Brady Bassett
+ */
 public class LoginViewController extends ViewController implements Initializable {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginBtn;
     @FXML private Label zoneLabel;
 
+    /**
+     * Initializes all text and prompt texts.
+     * @param url The url to the loginView.fxml file.
+     * @param resourceBundle This parameter contains all locale-specific objects.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         usernameField.setPromptText(bundle.getString("field.username"));
@@ -38,6 +47,13 @@ public class LoginViewController extends ViewController implements Initializable
         zoneLabel.setText(String.valueOf(Locale.getDefault()));
     }
 
+    /**
+     * Whenever a user attempts to click the login button, this function will validate the username and password fields,
+     * and also authenticate the users credentials. In the case that a user fails the validation or authentication then
+     * display an alert with the appropriate error message. The login attempt will then be logged, and if the
+     * authentication is successful switch to the main view.
+     * @param event The ActionEvent to pass down the current window to the main view.
+     */
     @FXML private void onLogin(ActionEvent event) {
         boolean successfulLogin = true;
         String errorMessage = "N/A";
@@ -67,6 +83,10 @@ public class LoginViewController extends ViewController implements Initializable
         }
     }
 
+    /**
+     * This function will check if the username or password fields are empty, and will also check if the current user is
+     * assigned to null. If any of these are true, a NullPointerException is thrown with the appropriate error message.
+     */
     private void loginValidation() {
         if (usernameField.getText().isEmpty())
             throw new NullPointerException(bundle.getString("error.nullUsername"));
@@ -76,6 +96,14 @@ public class LoginViewController extends ViewController implements Initializable
             throw new NullPointerException(bundle.getString("error.noMatchingUser"));
     }
 
+    /**
+     * This function logs every login attempt to the login_activity.txt file (one is created if it does not already
+     * exist). If the login attempt is successful then no error message is provided, otherwise if the attempt was
+     * unsuccessful then the appropriate error message is displayed in addition to the login failure.
+     * @param successfulLogin This value determines if the login was successful or not.
+     * @param errorMessage If the login was successful then this should be an empty String, otherwise the appropriate
+     *                     error message is provided.
+     */
     private void logLoginAttempt(boolean successfulLogin, String errorMessage) {
         final DateTimeFormatter dtf = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         final String dateTime = dtf.format(OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS));

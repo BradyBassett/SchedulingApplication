@@ -4,18 +4,32 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ResourceBundle;
 
+/**
+ * This class is responsible for opening and closing the connection to the database.
+ * @author Brady Bassett
+ */
 public abstract class JDBC {
-    private final static ResourceBundle bundle = ResourceBundle.getBundle("com.C195.Resources.db.properties");
+    private final static ResourceBundle bundle = ResourceBundle.getBundle("com.C195.Resources.db");
     private static final String protocol = "jdbc";
     private static final String vendor = ":mysql:";
     private static final String location = bundle.getString("location");
     private static final String databaseName = bundle.getString("databaseName");
-    private static final String jdbcUrl = protocol + vendor + location + databaseName + "?connectionTimeZone = SERVER"; // LOCAL
-    private static final String driver = bundle.getString("driver"); // Driver reference
-    private static final String userName = bundle.getString("userName"); // Username
-    private static final String password = bundle.getString("password"); // Password
-    public static Connection connection;  // Connection Interface
+    // LOCAL
+    private static final String jdbcUrl = protocol + vendor + location + databaseName + "?connectionTimeZone = SERVER";
+    // Driver reference
+    private static final String driver = bundle.getString("driver");
+    private static final String userName = bundle.getString("userName");
+    private static final String password = bundle.getString("password");
+    /**
+     * The connection interface that contains the connection to the database.
+     * @see #openConnection()
+     * @see #closeConnection()
+     */
+    public static Connection connection;
 
+    /**
+     * Attempts to create a connection to the database and displays an error to the console in the case of an error.
+     */
     public static void openConnection() {
         try {
             Class.forName(driver); // Locate Driver
@@ -27,6 +41,10 @@ public abstract class JDBC {
         }
     }
 
+    /**
+     * Attempts to close the opened connection to the database and displays an error to the console in the case of an
+     * error.
+     */
     public static void closeConnection() {
         try {
             connection.close();

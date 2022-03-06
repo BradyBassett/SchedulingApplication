@@ -27,6 +27,10 @@ import static com.C195.Database.QueryAppointments.*;
 import static com.C195.Database.QueryCustomers.deleteCustomer;
 import static com.C195.Database.QueryCustomers.queryCustomers;
 
+/**
+ * This class is responsible for controlling all functionality for the mainView scene.
+ * @author Brady Bassett
+ */
 public class MainViewController extends ViewController implements Initializable {
     private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private ObservableList<Customer> customers = FXCollections.observableArrayList();
@@ -68,6 +72,11 @@ public class MainViewController extends ViewController implements Initializable 
     @FXML private TableColumn<Customer, String> customerPhone;
     @FXML private TableColumn<Customer, Integer> customerDivisionId;
 
+    /**
+     * Initializes all text, prompt texts and table values.
+     * @param url The url to the mainView.fxml file.
+     * @param resourceBundle This parameter contains all locale-specific objects.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initText();
@@ -75,6 +84,9 @@ public class MainViewController extends ViewController implements Initializable 
         initCustomerTable();
     }
 
+    /**
+     * When called, sets the text and prompt text values.
+     */
     private void initText() {
         appointmentsTab.setText(bundle.getString("tab.appointments"));
         customersTab.setText(bundle.getString("tab.customers"));
@@ -95,7 +107,6 @@ public class MainViewController extends ViewController implements Initializable 
         byMonthRadioButton.setText(bundle.getString("button.month"));
         byWeekRadioButton.setText(bundle.getString("button.week"));
         byDayRadioButton.setText(bundle.getString("button.day"));
-        // todo set to last set values also
         selectedDay.setValue(LocalDate.now());
 
         appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.day")));
@@ -119,6 +130,15 @@ public class MainViewController extends ViewController implements Initializable 
         customerDivisionId.setText(bundle.getString("table.division"));
     }
 
+    /**
+     * This function first will query all applicable appointments and then will set all cell values for each table cell.
+     * After this, it will set up an onMouseClicked event handeler for each row to toggle the modify and delete buttons
+     * on or off depending on if a row is selected by the user.
+     * LAMBDA JUSTIFICATION - First for the cell values, a lambda function made sense because I did not want to display
+     * the reference to the model, but instead wanted to display the models ID. And for the RowFactory, I wanted to set
+     * up an onMouseClicked event handeler for each row present in the table. And whenever that event handeler is called
+     * I wanted to toggle the modify and delete button states.
+     */
     @FXML private void initAppointmentTable() {
         setAppointments();
 
@@ -130,9 +150,12 @@ public class MainViewController extends ViewController implements Initializable 
         appointmentStart.setCellValueFactory(new PropertyValueFactory<>("start"));
         appointmentEnd.setCellValueFactory(new PropertyValueFactory<>("end"));
         // cd means cell data
-        appointmentCustomerId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getCustomer().getCustomerId()).asObject());
-        appointmentContactId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getContact().getContactId()).asObject());
-        appointmentUserId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getUser().getUserId()).asObject());
+        appointmentCustomerId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getCustomer().
+                getCustomerId()).asObject());
+        appointmentContactId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getContact().
+                getContactId()).asObject());
+        appointmentUserId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getUser().getUserId()).
+                asObject());
         appointmentTable.setItems(appointments);
 
         appointmentTable.setRowFactory(tv -> {
@@ -150,10 +173,18 @@ public class MainViewController extends ViewController implements Initializable 
         });
     }
 
+    /**
+     * This function will first convert the usersLocal time to UTC, and then depending on what Radio Button is selected,
+     * it will query the appointments table on that specific timeframe. Then for each appointment returned, convert the
+     * start and end times to the users local timezone.
+     * LAMBDA JUSTIFICATION - I used a lambda expression here because I wanted to loop through each appointment in the
+     *      * appointments list and convert the start and end times to the local timezone.
+     */
     private void setAppointments() {
         try {
             openConnection();
-            String timestamp = convertLocalToUTC(Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now()))).toString();
+            String timestamp = convertLocalToUTC(Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now()))).
+                    toString();
             if (byDayRadioButton.isSelected())
                 appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(timestamp));
             if (byWeekRadioButton.isSelected())
@@ -162,6 +193,7 @@ public class MainViewController extends ViewController implements Initializable 
                 appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(timestamp));
         } catch (SQLException e) {
             showAlert(e);
+            return;
         } finally {
             closeConnection();
         }
@@ -172,6 +204,10 @@ public class MainViewController extends ViewController implements Initializable 
         });
     }
 
+    /**
+     * Whenever one of the radio buttons is selected, set the table placeholder to the appropriate property, and
+     * initialize the table to represent the change.
+     */
     @FXML private void handleScheduleView() {
         if (byDayRadioButton.isSelected())
             appointmentTable.setPlaceholder(new Label(bundle.getString("table.empty.day")));
@@ -183,15 +219,28 @@ public class MainViewController extends ViewController implements Initializable 
         initAppointmentTable();
     }
 
+    /**
+     * If a user selects the add button, switch to the appointment view form.
+     * @param e The ActionEvent to pass down the current window to the appointment view.
+     */
     @FXML private void handleAppointmentAdd(ActionEvent e) {
         showView(e, "../Views/appointmentView.fxml");
     }
 
+    /**
+     * if a user selects the modify button, first get the selected appointment and then pass it down so that the
+     * appointment data may be displayed in the form to be modified.
+     * @param e The ActionEvent to pass down the current window to the appointment view.
+     */
     @FXML private void handleAppointmentModify(ActionEvent e) {
         Appointment appointment = appointmentTable.getSelectionModel().getSelectedItem();
         showView(e, appointment);
     }
 
+    /**
+     * When a user attempts to delete an appointment, first show an alert to get user confirmation on the deletion, then
+     * attempt to delete the appointment.
+     */
     @FXML private void handleAppointmentDelete() {
         if (confirmationAlert(bundle.getString("alert.confirmAppointmentDelete"))) {
             try {
@@ -202,6 +251,7 @@ public class MainViewController extends ViewController implements Initializable 
                         appointmentTable.getSelectionModel().getSelectedItem().getType()));
             } catch (SQLException e) {
                 showAlert(e);
+                return;
             } finally {
                 closeConnection();
             }
@@ -209,6 +259,15 @@ public class MainViewController extends ViewController implements Initializable 
         }
     }
 
+    /**
+     * This function first will query all customers within the customers table and then will set all cell values for
+     * each table cell. After this, it will set up an onMouseClicked event handeler for each row to toggle the modify
+     * and delete buttons on or off depending on if a row is selected by the user.
+     * LAMBDA JUSTIFICATION - First for the cell value, a lambda function made sense because I did not want to display
+     * the reference to the model, but instead wanted to display the models ID. And for the RowFactory, I wanted to set
+     * up an onMouseClicked event handeler for each row present in the table. And whenever that event handeler is called
+     * I wanted to toggle the modify and delete button states.
+     */
     private void initCustomerTable() {
         setCustomers();
 
@@ -218,7 +277,8 @@ public class MainViewController extends ViewController implements Initializable 
         customerPostalCode.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
         customerPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         // cd means cell data
-        customerDivisionId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getDivision().getDivisionID()).asObject());
+        customerDivisionId.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getDivision().
+                getDivisionID()).asObject());
         customerTable.setItems(customers);
 
         // tv means table view
@@ -237,6 +297,10 @@ public class MainViewController extends ViewController implements Initializable 
         });
     }
 
+    /**
+     * This function will attempt to query the customers table for every customer record present and then store them
+     * into the customers ObservableList.
+     */
     private void setCustomers() {
         try {
             openConnection();
@@ -248,15 +312,29 @@ public class MainViewController extends ViewController implements Initializable 
         }
     }
 
+    /**
+     * If a user selects the add button, switch to the customer view form.
+     * @param e The ActionEvent to pass down the current window to the customer view.
+     */
     @FXML private void handleCustomerAdd(ActionEvent e) {
         showView(e, "../Views/customerView.fxml");
     }
 
+    /**
+     * if a user selects the modify button, first get the selected customer and then pass it down so that the customer
+     * data may be displayed in the form to be modified.
+     * @param e The ActionEvent to pass down the current window to the customer view.
+     */
     @FXML private void handleCustomerModify(ActionEvent e) {
         Customer customer = customerTable.getSelectionModel().getSelectedItem();
         showView(e, customer);
     }
 
+    /**
+     * When a user attempts to delete a customer, first show an alert to get user confirmation on the deletion, then
+     * validate that the customer being deleted is not referenced in any appointments. Then, if all cases pass, delete
+     * the customer.
+     */
     @FXML private void handleCustomerDelete() {
         if (confirmationAlert(bundle.getString("alert.confirmCustomerDelete"))) {
             try {
@@ -266,6 +344,7 @@ public class MainViewController extends ViewController implements Initializable 
                 showAlert(bundle.getString("alert.customerDeleted"));
             } catch (SQLException | IllegalAccessException e) {
                 showAlert(e);
+                return;
             } finally {
                 closeConnection();
             }
@@ -273,19 +352,32 @@ public class MainViewController extends ViewController implements Initializable 
         }
     }
 
+    /**
+     * This function checks all appointment records in the appointments table to see any of them contain the customer
+     * that the user is attempting to delete. If the customer is present, then display an alert with the appropriate
+     * message.
+     * @throws IllegalAccessException Throws an IllegalAccessException if the customer is present in any appointments.
+     * @throws SQLException Throws an SQLException if the query experiences an error.
+     */
     private void validateCustomerDelete() throws IllegalAccessException, SQLException {
         ArrayList<Appointment> allAppointments = queryAllAppointments();
         for (Appointment appointment : allAppointments) {
-            if (appointment.getCustomer().getCustomerId() == customerTable.getSelectionModel().getSelectedItem().getCustomerId()) {
+            if (appointment.getCustomer().getCustomerId() == customerTable.getSelectionModel().getSelectedItem().
+                    getCustomerId()) {
                 throw new IllegalAccessException(bundle.getString("error.customerDependencyPresent"));
             }
         }
     }
 
+    /**
+     * This function will display an alert either telling the user if they have an upcoming appointment, or that they
+     * have no upcoming appointments within the next 15 minutes.
+     */
     public void appointmentAlert() {
         Appointment appointment = null;
         try {
             openConnection();
+            // first get the current local time, then add 15 minutes to that time
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             Timestamp now = new Timestamp(calendar.getTimeInMillis());
@@ -297,6 +389,7 @@ public class MainViewController extends ViewController implements Initializable 
         } finally {
             closeConnection();
         }
+        // if queryNextAppointment returns an appointment
         if (appointment != null) {
             showAlert(bundle.getString("alert.appointmentUpcoming").replace("_", "Appointment ID: "
                     + appointment.getAppointmentId() + " starts at: " + convertUTCToLocal(appointment.getStart())));
@@ -305,14 +398,27 @@ public class MainViewController extends ViewController implements Initializable 
         }
     }
 
+    /**
+     * This function switches to the customerAppointmentsReportView when the customerAppointmentsReport button is
+     * selected.
+     * @param e The ActionEvent to pass down the current window to the customer view.
+     */
     @FXML private void handleCustomerAppointmentsReport(ActionEvent e) {
         showView(e, "../Views/customerAppointmentsReportView.fxml");
     }
 
+    /**
+     * This function switches to the contactsScheduleReportView when the contactScheduleReport button is selected.
+     * @param e The ActionEvent to pass down the current window to the customer view.
+     */
     @FXML private void handleContactScheduleReport(ActionEvent e) {
         showView(e, "../Views/contactsScheduleReportView.fxml");
     }
 
+    /**
+     * This function switches to the usersScheduleReportView when the usersScheduleReport button is selected.
+     * @param e The ActionEvent to pass down the current window to the customer view.
+     */
     @FXML private void handleUsersScheduleReport(ActionEvent e) {
         showView(e, "../Views/usersScheduleReportView.fxml");
     }

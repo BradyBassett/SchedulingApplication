@@ -29,6 +29,10 @@ import static com.C195.Database.QueryCustomers.queryCustomers;
 import static com.C195.Database.QueryUsers.queryUser;
 import static com.C195.Database.QueryUsers.queryUsers;
 
+/**
+ * This class is responsible for controlling all form functionality for the appointmentView scene.
+ * @author Brady Bassett
+ */
 public class AppointmentViewController extends FormController implements Initializable {
     public boolean newAppointment = true;
     @FXML private TextField appointmentIdField;
@@ -42,6 +46,11 @@ public class AppointmentViewController extends FormController implements Initial
     @FXML private ComboBox<User> appointmentUserBox;
     @FXML private ComboBox<Contact> appointmentContactBox;
 
+    /**
+     * Initializes all text and prompt texts values, as well as the items in each ComboBox.
+     * @param url The url to the appointmentView.fxml file.
+     * @param resourceBundle This parameter contains all locale-specific objects.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initButtons();
@@ -62,10 +71,13 @@ public class AppointmentViewController extends FormController implements Initial
         appointmentCustomerBox.setPromptText(bundle.getString("field.customerId"));
         appointmentUserBox.setPromptText(bundle.getString("field.userId"));
         appointmentContactBox.setPromptText(bundle.getString("field.contact"));
-        initContacts();
+        initBoxes();
     }
 
-    private void initContacts() {
+    /**
+     * This function is called to initialize customer, user, and contacts data into their respective ComboBoxes.
+     */
+    private void initBoxes() {
         ObservableList<Customer> customers;
         ObservableList<User> users;
         ObservableList<Contact> contacts;
@@ -81,6 +93,7 @@ public class AppointmentViewController extends FormController implements Initial
             closeConnection();
         }
 
+        // Displays the Customer ID value instead of the memory address
         appointmentCustomerBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Customer customer) {
@@ -94,6 +107,7 @@ public class AppointmentViewController extends FormController implements Initial
         });
         appointmentCustomerBox.setItems(customers);
 
+        // Displays the Appointment ID value instead of the memory address
         appointmentUserBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(User user) {
@@ -107,6 +121,7 @@ public class AppointmentViewController extends FormController implements Initial
         });
         appointmentUserBox.setItems(users);
 
+        // Displays the Contact ID value instead of the memory address
         appointmentContactBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Contact contact) {
@@ -121,6 +136,11 @@ public class AppointmentViewController extends FormController implements Initial
         appointmentContactBox.setItems(contacts);
     }
 
+    /**
+     * This function is called whenever the modify button is selected on the mainView, and passes the selected
+     * appointment information into all fields.
+     * @param appointment The appointment that is being loaded.
+     */
     public void initAppointmentData(Appointment appointment) {
         appointmentIdField.setText(String.valueOf(appointment.getAppointmentId()));
         appointmentTitleField.setText(appointment.getTitle());
@@ -134,9 +154,11 @@ public class AppointmentViewController extends FormController implements Initial
         appointmentContactBox.setValue(appointment.getContact());
     }
 
+    /**
+     * This function saves the appointment data and either creates or modifies an appointment in the database.
+     * @param e The ActionEvent to pass down the current window to the main view.
+     */
     @FXML private void handleSave(ActionEvent e) {
-        boolean success = false;
-
         try {
             openConnection();
             validateItems();
@@ -154,17 +176,19 @@ public class AppointmentViewController extends FormController implements Initial
             } else {
                 modifyAppointment(appointment, convertLocalToUTC(Timestamp.valueOf(LocalDateTime.now())));
             }
-            success = true;
         } catch (NullPointerException | IllegalArgumentException | SQLException exception) {
             showAlert(exception);
+            return;
         } finally {
             closeConnection();
         }
-
-        if (success)
-            showView(e, "../Views/mainView.fxml");
+        showView(e, "../Views/mainView.fxml");
     }
 
+    /**
+     * This function is responsible for validating that every user inputted field is a valid input.
+     * @throws SQLException Throws an SQLException if the query experiences an error.
+     */
     private void validateItems() throws SQLException {
         // checks if all input fields are not empty
         validateFieldNotEmpty(appointmentTitleField.getText(), bundle.getString("error.nullTitleField"));
@@ -216,6 +240,12 @@ public class AppointmentViewController extends FormController implements Initial
         }
     }
 
+    /**
+     * This function validates that the start date and end date fields are valid Timestamp values that are within, the
+     * given parameters.
+     * @param field The Timestamp field that is being validated.
+     * @throws SQLException Throws an SQLException if the query experiences an error.
+     */
     private void validateDates(String field) throws SQLException {
         if (!validTimestamp(field))
             throw new IllegalArgumentException(bundle.getString("error.invalidTimestamp"));

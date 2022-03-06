@@ -17,7 +17,11 @@ import static com.C195.Database.JDBC.openConnection;
 import static com.C195.Database.QueryAppointments.queryAppointmentTypes;
 import static com.C195.Database.QueryAppointments.queryNumberOfCustomerAppointments;
 
-
+/**
+ * This class is responsible for displaying a report where all customer appointments that match a given month and
+ * appointment type.
+ * @author Brady Bassett
+ */
 public class CustomerAppointmentsReportViewController extends ReportController {
     @FXML private ComboBox<String> typesBox;
     @FXML private ComboBox<Month> monthsBox;
@@ -26,6 +30,11 @@ public class CustomerAppointmentsReportViewController extends ReportController {
     @FXML private Label type;
     @FXML private Label month;
 
+    /**
+     * Initializes all text and prompt texts values, as well as the items in each ComboBox.
+     * @param url The url to the customerAppointmentsReportView.fxml file.
+     * @param resourceBundle This parameter contains all locale-specific objects.
+     */
     public void initialize(URL url, ResourceBundle resourceBundle) {
         titleLabel.setText(bundle.getString("label.customerAppointmentsReport"));
         closeButton.setText(bundle.getString("button.close"));
@@ -36,6 +45,9 @@ public class CustomerAppointmentsReportViewController extends ReportController {
         initMonths();
     }
 
+    /**
+     * Queries the database for every appointment type value.
+     */
     private void initTypes() {
         ObservableList<String> types;
         try {
@@ -51,6 +63,9 @@ public class CustomerAppointmentsReportViewController extends ReportController {
         typesBox.setItems(types);
     }
 
+    /**
+     * Sets the months ComboBox to include every month in the year.
+     */
     private void initMonths() {
         ObservableList<Month> months = FXCollections.observableArrayList();
         months.setAll(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY,
@@ -58,6 +73,10 @@ public class CustomerAppointmentsReportViewController extends ReportController {
         monthsBox.setItems(months);
     }
 
+    /**
+     * Ensuring that no boxes are left as null, this function will query the database for the number of appointments
+     * that match the given box parameters.
+     */
     @FXML private void getReport() {
         int aptCount;
         try {
@@ -75,6 +94,9 @@ public class CustomerAppointmentsReportViewController extends ReportController {
         month.setText(monthsBox.getValue().toString());
     }
 
+    /**
+     * Checks each ComboBox to ensure that no value is left null.
+     */
     private void validateBoxes() {
         if (typesBox.getValue() == null)
             throw new NullPointerException(bundle.getString("error.nullTypeBox"));
