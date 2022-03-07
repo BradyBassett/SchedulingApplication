@@ -32,6 +32,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-
-// todo - maintain tab position when switching back to main view
-// todo - maintain selected date when switching back to main view
