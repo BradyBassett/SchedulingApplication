@@ -99,6 +99,20 @@ public abstract class QueryAppointments extends Query {
     }
 
     /**
+     * A function to query all appointments in a single day that are associated with a provided user ID.
+     * @param userId User ID to match.
+     * @param day The specific day to restrict search to.
+     * @return Returns the value of accessResults.
+     * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
+     * is thrown.
+     */
+    public static ArrayList<Appointment> queryAppointmentsByUserOnDay(int userId, String day) throws SQLException {
+        String statement = "SELECT * FROM appointments WHERE DAY(Start)=DAY('" + day + "') AND " +
+                           "YEAR(Start)=YEAR('" + day + "') AND User_ID=" + userId + ";";
+        return accessResults(statement);
+    }
+
+    /**
      * A helper function for all queries which return an ArrayList of appointments.
      * @param statement The sql statement which is being queried.
      * @return Returns the ArrayList of appointments which were queried from the statement
@@ -192,7 +206,8 @@ public abstract class QueryAppointments extends Query {
         String statement = "SELECT Type FROM appointments";
         ResultSet results = getResults(connection, statement);
         while (results.next()) {
-            types.add(results.getString(1));
+            if (!types.contains(results.getString(1)))
+                types.add(results.getString(1));
         }
         return types;
     }
