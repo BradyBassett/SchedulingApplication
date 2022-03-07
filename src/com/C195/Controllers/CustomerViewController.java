@@ -150,6 +150,7 @@ public class CustomerViewController extends FormController implements Initializa
     @FXML private void handleCountrySelected() {
         initDivisions(customerCountryBox.getValue().getCountryId());
         customerDivisionBox.setDisable(false);
+        customerDivisionBox.setValue(null);
     }
 
     /**
