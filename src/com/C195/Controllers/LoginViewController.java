@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
@@ -44,7 +45,7 @@ public class LoginViewController extends ViewController implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle) {
         usernameField.setPromptText(bundle.getString("field.username"));
         loginBtn.setText(bundle.getString("button.login"));
-        zoneLabel.setText(String.valueOf(Locale.getDefault()));
+        zoneLabel.setText(ZoneId.systemDefault().toString());
     }
 
     /**
