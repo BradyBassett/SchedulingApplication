@@ -55,7 +55,7 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </TextField>
-            <Label fx:id="zoneLabel" layoutX="462.0" layoutY="271.0" textAlignment="RIGHT" textFill="WHITE" />
+            <Label fx:id="zoneLabel" alignment="CENTER_RIGHT" layoutX="305.0" layoutY="267.0" prefHeight="17.0" prefWidth="193.0" textAlignment="RIGHT" textFill="WHITE" />
          </children>
          <styleClass>
             <String fx:value="rounded" />
