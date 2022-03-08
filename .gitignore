@@ -1,3 +1,5 @@
 /login_activity.txt
 /out/
 /src/com/C195/Resources/db.properties
+/javadocs
+*.zip
