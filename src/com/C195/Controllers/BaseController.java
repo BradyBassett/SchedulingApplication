@@ -101,6 +101,7 @@ public abstract class BaseController {
 
     /**
      * A function which converts a given timestamp from UTC to the users local timezone.
+     * If your database server converts all timestamps from your local time to utc then remove this function
      * @param timestamp A timestamp in UTC.
      * @return Returns the timestamp after being converted to the users local timezone.
      */
