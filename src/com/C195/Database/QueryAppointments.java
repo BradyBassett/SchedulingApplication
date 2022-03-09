@@ -112,11 +112,12 @@ public abstract class QueryAppointments extends Query {
      * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
      * is thrown.
      */
-    public static ArrayList<Appointment> queryAppointmentsByUserOnDay(int userId, String day, String offset) throws SQLException {
+    public static ArrayList<Appointment> queryAppointmentsByUserOnDay(int userId, String day, String offset)
+            throws SQLException {
         String cvtStart = "CONVERT_TZ(Start, '+00:00', '" + offset + "')";
         String cvtEnd = "CONVERT_TZ(End, '+00:00', '" + offset + "')";
         String statement = "SELECT *, " + cvtStart + ", " + cvtEnd + " FROM appointments WHERE DAY(" + cvtStart +
-                           ")=DAY('" + day + "') AND " + "YEAR(" + cvtStart + ")=YEAR('" + day + " AND User_ID=" +
+                           ")=DAY('" + day + "') AND " + "YEAR(" + cvtStart + ")=YEAR('" + day + "') AND User_ID=" +
                            userId + ";";
         return accessResults(statement);
     }
