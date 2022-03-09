@@ -38,9 +38,11 @@ public abstract class QueryAppointments extends Query {
      * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
      * is thrown.
      */
-    public static ArrayList<Appointment> queryAppointmentsOnDay(String timestamp) throws SQLException {
-        String statement = "SELECT * FROM appointments WHERE DAY(Start)=DAY('" + timestamp + "') AND " +
-                           "YEAR(Start)=YEAR('" + timestamp + "');";
+    public static ArrayList<Appointment> queryAppointmentsOnDay(String timestamp, String offset) throws SQLException {
+        String cvtStart = "CONVERT_TZ(Start, '+00:00', '" + offset + "')";
+        String cvtEnd = "CONVERT_TZ(End, '+00:00', '" + offset + "')";
+        String statement = "SELECT *, " + cvtStart + ", " + cvtEnd + " FROM appointments WHERE DAY(" + cvtStart +
+                           ")=DAY('" + timestamp + "') AND " + "YEAR(" + cvtStart + ")=YEAR('" + timestamp + "');";
         return accessResults(statement);
     }
 
@@ -52,9 +54,11 @@ public abstract class QueryAppointments extends Query {
      * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
      * is thrown.
      */
-    public static ArrayList<Appointment> queryAppointmentsOnWeek(String timestamp) throws SQLException {
-        String statement = "SELECT * FROM appointments WHERE WEEK(Start)=WEEK('" + timestamp + "') " +
-                           "AND YEAR(Start)=YEAR('" + timestamp + "');";
+    public static ArrayList<Appointment> queryAppointmentsOnWeek(String timestamp, String offset) throws SQLException {
+        String cvtStart = "CONVERT_TZ(Start, '+00:00', '" + offset + "')";
+        String cvtEnd = "CONVERT_TZ(End, '+00:00', '" + offset + "')";
+        String statement = "SELECT *, " + cvtStart + ", " + cvtEnd + " FROM appointments WHERE WEEK(" + cvtStart +
+                           ")=WEEK('" + timestamp + "') " + "AND YEAR(" + cvtStart + ")=YEAR('" + timestamp + "');";
         return accessResults(statement);
     }
 
@@ -66,9 +70,11 @@ public abstract class QueryAppointments extends Query {
      * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
      * is thrown.
      */
-    public static ArrayList<Appointment> queryAppointmentsOnMonth(String timestamp) throws SQLException {
-        String statement = "SELECT * FROM appointments WHERE MONTH(Start)=MONTH('" + timestamp + "') " +
-                           "AND YEAR(Start)=YEAR('" + timestamp + "');";
+    public static ArrayList<Appointment> queryAppointmentsOnMonth(String timestamp, String offset) throws SQLException {
+        String cvtStart = "CONVERT_TZ(Start, '+00:00', '" + offset + "')";
+        String cvtEnd = "CONVERT_TZ(End, '+00:00', '" + offset + "')";
+        String statement = "SELECT *, " + cvtStart + ", " + cvtEnd + " FROM appointments WHERE MONTH(" + cvtStart +
+                           ")=MONTH('" + timestamp + "') AND " + "YEAR(" + cvtStart + ")=YEAR('" + timestamp + "');";
         return accessResults(statement);
     }
 
@@ -106,9 +112,12 @@ public abstract class QueryAppointments extends Query {
      * @throws SQLException If the sql statement has an error or if there is an issue with the database a SQLException
      * is thrown.
      */
-    public static ArrayList<Appointment> queryAppointmentsByUserOnDay(int userId, String day) throws SQLException {
-        String statement = "SELECT * FROM appointments WHERE DAY(Start)=DAY('" + day + "') AND " +
-                           "YEAR(Start)=YEAR('" + day + "') AND User_ID=" + userId + ";";
+    public static ArrayList<Appointment> queryAppointmentsByUserOnDay(int userId, String day, String offset) throws SQLException {
+        String cvtStart = "CONVERT_TZ(Start, '+00:00', '" + offset + "')";
+        String cvtEnd = "CONVERT_TZ(End, '+00:00', '" + offset + "')";
+        String statement = "SELECT *, " + cvtStart + ", " + cvtEnd + " FROM appointments WHERE DAY(" + cvtStart +
+                           ")=DAY('" + day + "') AND " + "YEAR(" + cvtStart + ")=YEAR('" + day + " AND User_ID=" +
+                           userId + ";";
         return accessResults(statement);
     }
 
@@ -129,8 +138,8 @@ public abstract class QueryAppointments extends Query {
             Appointment appointment = new Appointment(results.getInt("Appointment_ID"),
                     results.getString("Title"), results.getString("Description"),
                     results.getString("Location"), results.getString("Type"),
-                    results.getTimestamp("Start"), results.getTimestamp("End"),
-                    customer, user, contact);
+                    results.getTimestamp("Start"), results.getTimestamp("End"), customer, user,
+                    contact);
             appointments.add(appointment);
         }
         return appointments;

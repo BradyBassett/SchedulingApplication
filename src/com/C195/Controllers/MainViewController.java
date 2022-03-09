@@ -16,10 +16,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ResourceBundle;
+import java.time.OffsetDateTime;
+import java.util.*;
 
 import static com.C195.Database.JDBC.closeConnection;
 import static com.C195.Database.JDBC.openConnection;
@@ -183,14 +181,14 @@ public class MainViewController extends ViewController implements Initializable 
     private void setAppointments() {
         try {
             openConnection();
-            String timestamp = convertLocalToUTC(Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now()))).
-                    toString();
+            String timestamp = Timestamp.valueOf(selectedDay.getValue().atTime(LocalTime.now())).toString();
+            String offset = OffsetDateTime.now().getOffset().toString();
             if (byDayRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(timestamp));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnDay(timestamp, offset));
             if (byWeekRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnWeek(timestamp));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnWeek(timestamp, offset));
             if (byMonthRadioButton.isSelected())
-                appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(timestamp));
+                appointments = FXCollections.observableArrayList(queryAppointmentsOnMonth(timestamp, offset));
         } catch (SQLException e) {
             showAlert(e);
             return;

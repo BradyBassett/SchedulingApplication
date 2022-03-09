@@ -18,6 +18,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ResourceBundle;
 
 import static com.C195.Database.JDBC.closeConnection;
@@ -229,25 +230,26 @@ public class AppointmentViewController extends FormController implements Initial
         // checks if new apt start or end times conflict with existing appointments for selected user, or if the
         // selected customer already has conflicting appointments
         for (Appointment apt : queryAppointmentsByUserOnDay(appointmentUserBox.getValue().getUserId(),
-                convertLocalToUTC(Timestamp.valueOf(appointmentStartField.getText())).toString())) {
+                convertLocalToUTC(Timestamp.valueOf(appointmentStartField.getText())).toString(),
+                OffsetDateTime.now().getOffset().toString())) {
             Timestamp aptStart = convertUTCToLocal(apt.getStart());
             Timestamp aptEnd = convertUTCToLocal(apt.getEnd());
             if (apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())){
                 if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
-                        (fieldStart.after(aptStart) && aptStart.before(aptEnd)) ||
+                        (fieldStart.after(aptStart) && fieldStart.before(aptEnd)) ||
                         (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd))) {
                     throw new IllegalArgumentException(bundle.getString("error.conflictingTimes"));
                 }
             }
         }
         for (Appointment apt : queryAppointmentsOnDay(convertLocalToUTC(Timestamp.valueOf(appointmentStartField
-                .getText())).toString())) {
+                .getText())).toString(), OffsetDateTime.now().getOffset().toString())) {
             Timestamp aptStart = convertUTCToLocal(apt.getStart());
             Timestamp aptEnd = convertUTCToLocal(apt.getEnd());
             if (apt.getCustomer().getCustomerId() == appointmentCustomerBox.getValue().getCustomerId() &&
                 apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())) {
                 if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
-                        (fieldStart.after(aptStart) && aptStart.before(aptEnd)) ||
+                        (fieldStart.after(aptStart) && fieldStart.before(aptEnd)) ||
                         (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd))) {
                     throw new IllegalArgumentException(bundle.getString("error.conflictingCustomerTimes"));
                 }
