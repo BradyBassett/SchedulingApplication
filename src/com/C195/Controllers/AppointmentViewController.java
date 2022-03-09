@@ -229,31 +229,43 @@ public class AppointmentViewController extends FormController implements Initial
         Timestamp fieldEnd = Timestamp.valueOf(appointmentEndField.getText());
         // checks if new apt start or end times conflict with existing appointments for selected user, or if the
         // selected customer already has conflicting appointments
-        for (Appointment apt : queryAppointmentsByUserOnDay(appointmentUserBox.getValue().getUserId(),
-                convertLocalToUTC(Timestamp.valueOf(appointmentStartField.getText())).toString(),
+        for (Appointment apt : queryAppointmentsOnDay(appointmentStartField.getText(),
                 OffsetDateTime.now().getOffset().toString())) {
             Timestamp aptStart = convertUTCToLocal(apt.getStart());
             Timestamp aptEnd = convertUTCToLocal(apt.getEnd());
-            if (apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())){
-                if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
-                        (fieldStart.after(aptStart) && fieldStart.before(aptEnd)) ||
-                        (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd))) {
-                    throw new IllegalArgumentException(bundle.getString("error.conflictingTimes"));
-                }
+
+            if (apt.getCustomer().getCustomerId() == appointmentCustomerBox.getValue().getCustomerId() &&
+                    apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())) {
+                checkStartAndEnd(fieldStart, fieldEnd, aptStart, aptEnd, "error.conflictingCustomerTimes");
+            }
+            if ((apt.getUser().getUserId() == appointmentUserBox.getValue().getUserId() &&
+                    apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText()))) {
+                checkStartAndEnd(fieldStart, fieldEnd, aptStart, aptEnd, "error.conflictingUserTimes");
+            }
+            if (apt.getContact().getContactId() == appointmentContactBox.getValue().getContactId() &&
+                    apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())) {
+                checkStartAndEnd(fieldStart, fieldEnd, aptStart, aptEnd, "error.conflictingContactTimes");
             }
         }
-        for (Appointment apt : queryAppointmentsOnDay(convertLocalToUTC(Timestamp.valueOf(appointmentStartField
-                .getText())).toString(), OffsetDateTime.now().getOffset().toString())) {
-            Timestamp aptStart = convertUTCToLocal(apt.getStart());
-            Timestamp aptEnd = convertUTCToLocal(apt.getEnd());
-            if (apt.getCustomer().getCustomerId() == appointmentCustomerBox.getValue().getCustomerId() &&
-                apt.getAppointmentId() != Integer.parseInt(appointmentIdField.getText())) {
-                if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
-                        (fieldStart.after(aptStart) && fieldStart.before(aptEnd)) ||
-                        (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd))) {
-                    throw new IllegalArgumentException(bundle.getString("error.conflictingCustomerTimes"));
-                }
-            }
+    }
+
+    /**
+     * This function checks if the given start and end fields conflict in any way with the start and end times of a
+     * provided appointment and throws a provided error alert if there is a conflict.
+     * @param fieldStart The starting time of the user inputted field.
+     * @param fieldEnd The ending time of the user inputted field.
+     * @param aptStart The starting time of the appointment.
+     * @param aptEnd The ending time of the appointment.
+     * @param error The error to display with the alert.
+     */
+    private void checkStartAndEnd(Timestamp fieldStart, Timestamp fieldEnd, Timestamp aptStart, Timestamp aptEnd,
+                                  String error) {
+        if (fieldStart.equals(aptStart) || fieldEnd.equals(aptEnd) ||
+                (fieldStart.after(aptStart) && fieldStart.before(aptEnd)) ||
+                (fieldEnd.after(aptStart) && fieldEnd.before(aptEnd)) ||
+                (aptStart.after(fieldStart) && aptStart.before(fieldEnd)) ||
+                (aptEnd.after(fieldStart) && aptEnd.before(fieldEnd))) {
+            throw new IllegalArgumentException(bundle.getString(error));
         }
     }
 
